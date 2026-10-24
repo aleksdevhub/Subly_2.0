@@ -1,5 +1,6 @@
 using Dapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Subly.Data;
 using Subly.Dtos;
 using Subly.Models;
@@ -9,6 +10,7 @@ namespace Subly.Controllers;
 
 /// <summary>Регистрация и вход.</summary>
 [Route("api/auth")]
+[EnableRateLimiting("auth")]   // не больше 10 попыток в минуту с одного адреса
 public class AuthController : AppControllerBase
 {
     private readonly TokenService _tokens;

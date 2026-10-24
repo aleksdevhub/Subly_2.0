@@ -1,0 +1,11 @@
+# Настройки для хостинга Amvera (https://amvera.ru)
+# Проект собирается по Dockerfile, база subly.db и ключ jwt.key хранятся на постоянном диске /data
+meta:
+  environment: docker
+  toolchain:
+    name: docker
+build:
+  dockerfile: Dockerfile
+run:
+  containerPort: 8080
+  persistenceMount: /data

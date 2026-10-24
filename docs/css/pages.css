@@ -1,0 +1,188 @@
+/* =========================================================
+   pages.css — стили отдельных страниц:
+   главная, аналитика, категории, профиль.
+   ========================================================= */
+
+/* ---------- Главная: главная цифра месяца ---------- */
+.hero {
+  padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden;
+  /* лёгкое фиолетовое свечение в углу */
+  background:
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
+    var(--bg-surface);
+}
+.hero-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; color: var(--ink-2); }
+.hero-top .medium { flex: 1; }
+.hero-hint {
+  font-size: 12px; color: var(--ink-2); background: var(--bg-subtle); border-radius: 6px; padding: 2px 8px;
+}
+.hero-num { font-size: 44px; line-height: 1; font-weight: 700; letter-spacing: -0.04em; margin: 2px 0 6px; }
+.hero .seg { height: 12px; }
+.seg-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.seg-item { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-2); font-weight: 400; }
+.seg-item:hover { text-decoration: none; color: var(--ink); }
+.seg-item .v { color: var(--ink); font-weight: 500; }
+.hero-foot {
+  margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border);
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px;
+}
+.hero-foot > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.hero-foot .medium { font-size: 15px; }
+
+/* Три показателя справа от главной цифры */
+.kpi { padding: 14px 16px; display: flex; flex-direction: column; justify-content: center; gap: 4px; min-width: 0; }
+.kpi-label { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 500; color: var(--ink-2); }
+.kpi-label .icon { color: var(--ink-3); }
+.kpi-num { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.kpi-hint { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Ключевые показатели на странице аналитики */
+.stats .kpi { padding: 16px 18px; gap: 6px; }
+.stats .kpi .h2 { font-size: 22px; }
+
+/* ---------- Главная: лента «Ближайшие 14 дней» ---------- */
+.upcoming .card-head { padding-bottom: 10px; }
+.days {
+  display: grid; grid-template-columns: repeat(14, minmax(58px, 1fr)); gap: 6px;
+  padding: 0 20px 18px; overflow-x: auto; scrollbar-width: thin;
+}
+.day {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 4px 8px;
+  border-radius: var(--radius); border: 1px solid transparent; min-height: 108px;
+}
+.day .wd { font-size: 11px; color: var(--ink-3); font-weight: 500; }
+.day .dn { font-size: 15px; font-weight: 600; white-space: nowrap; }
+.day .logos { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-top: 2px; }
+.day .sum { font-size: 11px; font-weight: 600; color: var(--ink); margin-top: auto; white-space: nowrap; }
+.day.has { background: var(--bg-hover); border-color: var(--border); }
+.day.today .wd { color: var(--accent); }
+.day.today .dn { color: var(--accent); }
+.day.today { border-color: color-mix(in srgb, var(--accent) 35%, transparent); }
+
+/* ---------- Совет — тонкая полоса ---------- */
+.tip {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--lime) 28%, var(--bg-surface)); border: 1px solid color-mix(in srgb, var(--lime) 60%, var(--border));
+}
+.tip-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--lime); color: #121216; display: grid; place-items: center; flex-shrink: 0; }
+.tip p { flex: 1; font-size: 13px; }
+.tip a { color: var(--ink); display: inline-flex; align-items: center; gap: 2px; font-size: 13px; white-space: nowrap; }
+[data-theme="dark"] .tip { background: color-mix(in srgb, var(--lime) 8%, var(--bg-surface)); border-color: color-mix(in srgb, var(--lime) 25%, var(--border)); }
+
+/* ---------- Список подписок ---------- */
+.list-head { flex-wrap: wrap; }
+.list-cols {
+  display: flex; gap: 16px; padding: 8px 20px; font-size: 12px; color: var(--ink-3); font-weight: 500;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg-hover);
+}
+.list-cols span:first-child { flex: 1; }
+.list-cols .c-date { width: 170px; }
+.list-cols .c-price { width: 110px; text-align: right; margin-right: 38px; }
+
+.sub-row {
+  display: flex; align-items: center; gap: 14px; padding: 12px 20px;
+  border-bottom: 1px solid var(--border); position: relative; background: var(--bg-surface);
+}
+.sub-row:last-child { border-bottom: 0; }
+.sub-row.inactive { opacity: .5; }
+.sub-row .name { flex: 1; min-width: 0; }
+.sub-row .name > div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sub-row .name .small { font-size: 12px; }
+.sub-row .date { width: 170px; flex-shrink: 0; }
+.sub-row .date .small { font-size: 12px; }
+.sub-row .price { width: 110px; flex-shrink: 0; text-align: right; }
+.sub-row .price .small { font-size: 12px; }
+.list-card { overflow: hidden; }
+
+.list-foot { display: flex; justify-content: center; padding: 12px; border-top: 1px solid var(--border); }
+
+/* ---------- Аналитика ---------- */
+.chart-card { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.chart-head { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.chart-head .h3 { flex: 1; }
+.chart-legend { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); }
+.chart-legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+.chart-legend .paid { background: var(--chart-bar); }
+.chart-legend .current { background: var(--accent); }
+.chart-legend .forecast { background: repeating-linear-gradient(45deg, var(--accent-soft) 0 3px, var(--chart-hatch) 3px 5px); }
+
+.bar-chart { width: 100%; height: 240px; display: block; overflow: visible; }
+.bar-chart text { font-family: var(--font); font-size: 11px; fill: var(--ink-3); }
+.bar-chart .bar { cursor: default; }
+
+/* Структура расходов: общая полоса и список категорий */
+.struct-total { display: flex; align-items: baseline; gap: 8px; }
+.legend { display: flex; flex-direction: column; gap: 12px; }
+.struct-row { display: flex; flex-direction: column; gap: 6px; }
+.struct-row .top { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.struct-row .n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.struct-row .v { font-weight: 500; }
+.struct-row .p { width: 46px; text-align: right; color: var(--ink-3); font-size: 12px; }
+.struct-row .track { height: 4px; }
+
+/* ---------- Категории ---------- */
+.cat-card {
+  padding: 18px; display: flex; flex-direction: column; gap: 14px; cursor: pointer; position: relative;
+}
+.cat-card:hover { border-color: var(--border-strong); }
+.cat-card.selected { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+.cat-card .top { display: flex; align-items: center; justify-content: space-between; }
+.cat-card .sum { display: flex; align-items: baseline; gap: 6px; }
+.cat-card .h2 { font-size: 22px; }
+
+.cat-add {
+  border: 1px dashed var(--border-strong); border-radius: var(--radius-lg); background: none; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-height: 180px;
+  color: var(--ink-2); font-weight: 500;
+}
+.cat-add:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+.detail-head { flex-wrap: wrap; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+.detail-head .titles { flex: 1; min-width: 200px; }
+
+/* ---------- Профиль ---------- */
+.profile-card { padding: 22px 24px 8px; }
+.profile-top { display: flex; align-items: center; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+.profile-top .who { flex: 1; min-width: 0; }
+.profile-top .name-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.avatar-lg { width: 56px; height: 56px; font-size: 19px; font-weight: 600; }
+
+.p-field { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+.p-field:last-child { border-bottom: 0; }
+.p-field .tile { width: 34px; height: 34px; }
+.p-field .col-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.p-field .overline { font-size: 11px; }
+.p-field .val { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 500; }
+.p-field .dots { letter-spacing: 2px; }
+
+.danger-zone { padding: 18px 24px; border-color: color-mix(in srgb, var(--danger) 30%, var(--border)); }
+.danger-zone .row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.danger-zone .text { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 2px; }
+
+/* Карточка «Потрачено в этом месяце» — как главная цифра на главной */
+.spend {
+  border-radius: var(--radius-lg); padding: 22px 24px; display: flex; flex-direction: column; gap: 14px;
+  border: 1px solid var(--border); box-shadow: var(--shadow-card);
+  background:
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 10%, transparent), transparent 50%),
+    var(--bg-surface);
+}
+.spend .head { display: flex; align-items: center; gap: 8px; }
+.spend .head .overline { flex: 1; color: var(--ink-2); }
+.spend .big { font-size: 40px; line-height: 1; letter-spacing: -0.04em; color: var(--ink); }
+.spend .track { height: 8px; border-radius: 4px; }
+.spend .track > span { background: var(--accent); border-radius: 4px; }
+.spend .line { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.spend .line .l { flex: 1; color: var(--ink-2); }
+.spend .line .dot[style*="lime"] { background: var(--accent) !important; }
+.spend hr { border: 0; border-top: 1px solid var(--border); margin: 0; width: 100%; }
+
+.stats-card { padding: 16px 20px 6px; }
+.stat-line { display: flex; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+.stat-line:last-child { border-bottom: 0; }
+.stat-line .l { flex: 1; color: var(--ink-2); }
+.stat-line .v { font-weight: 500; }
+
+/* ---------- Небольшие вспомогательные блоки ---------- */
+.row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }

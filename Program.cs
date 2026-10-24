@@ -1,7 +1,10 @@
 using Subly.Models;
 using System.Reflection;
 using Dapper;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Subly.Data;
@@ -18,6 +21,29 @@ if (!string.IsNullOrEmpty(port))
 // Колонки snake_case (next_payment_date) ↔ свойства PascalCase (NextPaymentDate)
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 Clock.Configure(builder.Configuration["App:TimeZone"]);
+
+// Секретный ключ для токенов входа: создаётся автоматически и не хранится в репозитории
+SecretKeys.EnsureJwtKey(builder.Configuration, builder.Environment);
+
+// На хостинге запросы приходят через прокси — настоящий адрес посетителя в заголовке X-Forwarded-For
+builder.Services.Configure<ForwardedHeadersOptions>(o =>
+{
+    o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    o.KnownNetworks.Clear();
+    o.KnownProxies.Clear();
+});
+
+// Защита от подбора паролей: не больше 10 попыток входа/регистрации в минуту с одного адреса
+builder.Services.AddRateLimiter(o =>
+{
+    o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    o.OnRejected = async (ctx, token) =>
+        await ctx.HttpContext.Response.WriteAsJsonAsync(
+            new ErrorResponse("Слишком много попыток. Подождите минуту и попробуйте снова."), token);
+    o.AddPolicy("auth", http => RateLimitPartition.GetFixedWindowLimiter(
+        http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1) }));
+});
 
 builder.Services.AddSingleton<Db>();
 builder.Services.AddSingleton<TokenService>();
@@ -85,6 +111,7 @@ builder.Services.AddSwaggerGen(o =>
 });
 
 var app = builder.Build();
+app.UseForwardedHeaders();
 
 // Создаём таблицы и демо-данные
 await DbInitializer.InitializeAsync(app.Services, app.Configuration, app.Logger);
@@ -107,6 +134,7 @@ app.UseStaticFiles(new StaticFileOptions
     OnPrepareResponse = ctx => ctx.Context.Response.Headers.CacheControl = "no-cache"
 });
 
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

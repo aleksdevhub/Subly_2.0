@@ -11,3 +11,6 @@ appsettings.Production.json
 subly.db
 subly.db-shm
 subly.db-wal
+
+# Секретный ключ для токенов входа (создаётся автоматически)
+jwt.key

@@ -1,0 +1,372 @@
+/* =========================================================
+   components.css — повторяющиеся элементы интерфейса:
+   кнопки, поля ввода, карточки, бейджи, таблицы, окна, быстрый поиск.
+   ========================================================= */
+
+/* ---------- Логотип ---------- */
+.logo {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-weight: 700; font-size: 18px; letter-spacing: -0.03em; color: var(--ink);
+}
+.logo:hover { text-decoration: none; }
+.logo-mark {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--lime); color: #121216;
+  display: grid; place-items: center;
+}
+
+/* ---------- Кнопки ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px; padding: 0 16px; border-radius: var(--radius);
+  border: 1px solid transparent; background: none; cursor: pointer;
+  font-weight: 500; font-size: 14px; white-space: nowrap;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 1px 2px rgba(91, 76, 240, .25), inset 0 1px 0 rgba(255, 255, 255, .12); }
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+
+.btn-secondary { background: var(--bg-surface); border-color: var(--border); color: var(--ink); box-shadow: var(--shadow-card); }
+.btn-secondary:hover:not(:disabled) { border-color: var(--border-strong); background: var(--bg-hover); }
+
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover:not(:disabled) { background: #D53B40; }
+
+.btn-danger-outline { background: var(--bg-surface); border-color: var(--border); color: var(--danger); }
+.btn-danger-outline:hover:not(:disabled) { background: var(--danger-soft); border-color: var(--danger); }
+
+.btn-ghost { color: var(--ink-2); padding: 0 10px; height: 34px; }
+.btn-ghost:hover:not(:disabled) { background: var(--bg-subtle); color: var(--ink); }
+
+.btn-block { width: 100%; }
+
+.icon-btn {
+  width: 40px; height: 40px; border-radius: var(--radius); border: 1px solid var(--border);
+  background: var(--bg-surface); display: inline-grid; place-items: center; cursor: pointer; position: relative;
+  color: var(--ink-2); box-shadow: var(--shadow-card);
+}
+.icon-btn:hover { border-color: var(--border-strong); color: var(--ink); }
+.icon-btn .dot { position: absolute; top: 9px; right: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger); box-shadow: 0 0 0 2px var(--bg-surface); }
+
+.close-btn {
+  width: 32px; height: 32px; border-radius: var(--radius-sm); border: 0; background: none;
+  display: grid; place-items: center; cursor: pointer; color: var(--ink-3);
+}
+.close-btn:hover { background: var(--bg-subtle); color: var(--ink); }
+
+.link-btn {
+  border: 0; background: none; padding: 0; cursor: pointer; color: var(--ink-2); font-weight: 500;
+  display: inline-flex; align-items: center; gap: 4px; font-size: 13px;
+}
+.link-btn:hover { color: var(--ink); }
+
+.more-btn {
+  border: 0; background: none; cursor: pointer; color: var(--ink-3);
+  padding: 6px; border-radius: 7px; display: grid;
+}
+.more-btn:hover { background: var(--bg-subtle); color: var(--ink); }
+
+/* ---------- Поля ввода ---------- */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > label { font-size: 13px; font-weight: 500; color: var(--ink); }
+
+.input-wrap {
+  display: flex; align-items: center; gap: 10px; height: 42px; padding: 0 12px;
+  background: var(--bg-surface); border: 1px solid var(--border-strong); border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+}
+.input-wrap:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+.input-wrap.invalid { border-color: var(--danger); }
+.input-wrap > .icon { color: var(--ink-3); width: 18px; height: 18px; }
+.input-wrap input,
+.input-wrap select {
+  flex: 1; min-width: 0; height: 100%; border: 0; outline: 0; background: transparent; font-size: 14px;
+}
+.input-wrap select { cursor: pointer; appearance: none; }
+.input-wrap input::placeholder { color: var(--ink-3); }
+
+.toggle-pwd { border: 0; background: none; padding: 0; cursor: pointer; color: var(--ink-3); display: grid; }
+.toggle-pwd:hover { color: var(--ink-2); }
+
+.hint { font-size: 12px; color: var(--ink-2); }
+.hint.error { color: var(--danger); }
+.hint.ok { color: var(--success); }
+
+.form-error {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius);
+  background: var(--danger-soft); color: var(--danger); font-size: 13px; font-weight: 500;
+}
+.form-success { background: var(--success-soft); color: var(--success); }
+
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.row-2 > * { min-width: 0; }
+
+/* Чекбокс со своим квадратиком */
+.checkbox { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; font-size: 13px; color: var(--ink-2); user-select: none; }
+.checkbox input { position: absolute; opacity: 0; pointer-events: none; }
+.checkbox .box {
+  width: 18px; height: 18px; flex-shrink: 0; border-radius: 5px; border: 1.5px solid var(--border-strong);
+  background: var(--bg-surface); display: grid; place-items: center; color: transparent; margin-top: 1px;
+}
+.checkbox input:checked + .box { background: var(--accent); border-color: var(--accent); color: #fff; }
+.checkbox.danger input:checked + .box { background: var(--danger); border-color: var(--danger); }
+.checkbox input:focus-visible + .box { box-shadow: 0 0 0 3px var(--focus-ring); }
+
+/* Поиск по списку */
+.search {
+  display: flex; align-items: center; gap: 8px; width: 220px; height: 34px; padding: 0 10px;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--focus-ring); }
+.search .icon { color: var(--ink-3); }
+.search input { border: 0; outline: 0; background: none; flex: 1; min-width: 0; font-size: 13px; }
+
+/* Переключатель года */
+.year-switch {
+  display: inline-flex; align-items: center; gap: 2px; background: var(--bg-surface); padding: 3px;
+  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-card);
+}
+.year-switch button {
+  border: 0; background: none; width: 32px; height: 32px; border-radius: 7px; cursor: pointer;
+  display: grid; place-items: center; color: var(--ink-2);
+}
+.year-switch button:hover:not(:disabled) { background: var(--bg-subtle); color: var(--ink); }
+.year-switch button:disabled { opacity: .35; cursor: default; }
+.year-switch .y { min-width: 52px; text-align: center; font-weight: 600; }
+
+/* ---------- Карточки, бейджи, чипы ---------- */
+.card {
+  background: var(--bg-surface); border-radius: var(--radius-lg);
+  border: 1px solid var(--border); box-shadow: var(--shadow-card);
+}
+.card-pad { padding: 20px; }
+.card-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 14px; }
+.card-head > .h3 { flex: 1; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 6px;
+  font-size: 12px; font-weight: 500; white-space: nowrap; line-height: 18px;
+}
+.badge-accent  { background: var(--accent-soft);  color: var(--accent); }
+.badge-success { background: var(--success-soft); color: var(--success); }
+.badge-warning { background: var(--warning-soft); color: var(--warning); }
+.badge-danger  { background: var(--danger-soft);  color: var(--danger); }
+.badge-dark    { background: var(--bg-subtle); color: var(--ink); }
+
+/* Чипы-фильтры — как переключатель вкладок */
+.chips {
+  display: inline-flex; gap: 2px; padding: 3px; border-radius: var(--radius);
+  background: var(--bg-subtle); flex-wrap: wrap;
+}
+.chip {
+  border: 0; padding: 5px 10px; border-radius: 7px; background: none; color: var(--ink-2);
+  font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+}
+.chip:hover { color: var(--ink); }
+.chip .cnt { font-size: 11px; color: var(--ink-3); }
+.chip.active { background: var(--bg-surface); color: var(--ink); box-shadow: 0 1px 2px rgba(18, 18, 22, .08), 0 0 0 1px var(--border); }
+
+/* Цветной квадрат с иконкой */
+.tile {
+  width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+  color: #fff; flex-shrink: 0;
+}
+.tile-xs { width: 24px; height: 24px; border-radius: 7px; }
+.tile-sm { width: 30px; height: 30px; border-radius: 8px; }
+.tile-md { width: 36px; height: 36px; border-radius: 10px; }
+.tile-lg { width: 44px; height: 44px; border-radius: 12px; }
+.tile-soft   { background: var(--bg-subtle); color: var(--ink-2); }
+.tile-accent { background: var(--accent-soft); color: var(--accent); }
+.tile-danger { background: var(--danger-soft); color: var(--danger); }
+
+/* Полоса прогресса */
+.track { height: 6px; border-radius: 3px; background: var(--bg-subtle); overflow: hidden; }
+.track > span { display: block; height: 100%; border-radius: 3px; background: var(--accent); }
+
+/* Полоса из цветных кусков (доли категорий) */
+.seg { display: flex; gap: 3px; height: 10px; }
+.seg > span { flex: 0 0 auto; flex-grow: 0; min-width: 0; height: 100%; border-radius: 3px; }
+
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; display: inline-block; }
+
+.empty {
+  padding: 40px 24px; text-align: center; color: var(--ink-2);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-subtle), var(--bg-hover), var(--bg-subtle));
+  background-size: 200% 100%; border-radius: 8px;
+}
+
+/* ---------- Таблица ---------- */
+.table { width: 100%; border-collapse: collapse; }
+.table th {
+  text-align: left; font-size: 12px; font-weight: 500; color: var(--ink-3);
+  padding: 8px 16px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--bg-hover);
+}
+.table td { padding: 11px 16px; border-bottom: 1px solid var(--border); font-size: 13px; color: var(--ink-2); }
+.table tr:last-child td { border-bottom: 0; }
+.table th:first-child, .table td:first-child { padding-left: 20px; }
+.table th:last-child,  .table td:last-child  { padding-right: 20px; }
+.table .svc { display: flex; align-items: center; gap: 10px; color: var(--ink); font-size: 14px; font-weight: 500; }
+.table .svc .tile { width: 26px; height: 26px; border-radius: 7px; }
+.table .amount { color: var(--ink); font-size: 14px; font-weight: 500; text-align: right; white-space: nowrap; }
+.table .pm { display: inline-flex; gap: 8px; align-items: center; }
+.table-scroll { overflow-x: auto; }
+
+/* ---------- Выпадающее меню «⋯» ---------- */
+.menu {
+  position: absolute; z-index: 30; min-width: 200px; background: var(--bg-surface); border-radius: var(--radius);
+  box-shadow: var(--shadow-menu), 0 0 0 1px var(--border); padding: 4px;
+}
+.menu button {
+  width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 0; background: none;
+  border-radius: 7px; cursor: pointer; text-align: left; font-size: 13px;
+}
+.menu button .icon { width: 16px; height: 16px; color: var(--ink-3); }
+.menu button:hover { background: var(--bg-subtle); }
+.menu button.danger, .menu button.danger .icon { color: var(--danger); }
+
+/* ---------- Модальные окна ---------- */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 40; background: var(--overlay); backdrop-filter: blur(2px);
+  display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; padding: 24px; overflow-y: auto;
+}
+.modal {
+  width: 100%; max-width: 460px; background: var(--bg-surface); border-radius: 16px; padding: 24px;
+  border: 1px solid var(--border); box-shadow: var(--shadow-modal); display: flex; flex-direction: column; gap: 18px;
+}
+.modal .h2 { font-size: 19px; }
+.modal-head { display: flex; align-items: flex-start; justify-content: space-between; }
+.modal-title { display: flex; flex-direction: column; gap: 6px; }
+.modal form { display: flex; flex-direction: column; gap: 16px; }
+.modal .actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 4px; }
+.modal .actions .btn { min-width: 110px; }
+
+/* Индикатор надёжности пароля */
+.strength { display: flex; flex-direction: column; gap: 8px; }
+.strength .segs { display: flex; gap: 4px; }
+.strength .segs i { flex: 1; height: 4px; border-radius: 2px; background: var(--bg-subtle); }
+.strength .row { display: flex; align-items: center; }
+.strength .row span:first-child { flex: 1; }
+.req { display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: var(--ink-2); }
+.req li { display: flex; align-items: center; gap: 8px; }
+.req li.ok { color: var(--ink); }
+.req li.ok .icon { color: var(--success); }
+.req li:not(.ok) .icon { color: var(--ink-3); }
+
+/* Что удалится вместе с аккаунтом */
+.loss-list {
+  background: var(--danger-soft); border-radius: var(--radius); padding: 14px;
+  display: flex; flex-direction: column; gap: 8px; font-size: 13px;
+}
+.loss-list li { display: flex; align-items: center; gap: 10px; }
+.loss-list .icon { color: var(--danger); }
+
+/* Выбор цвета и иконки категории */
+.swatches { display: flex; gap: 8px; flex-wrap: wrap; }
+.swatch { width: 28px; height: 28px; border-radius: 8px; border: 0; cursor: pointer; }
+.swatch.selected { box-shadow: 0 0 0 2px var(--bg-surface), 0 0 0 4px var(--ink); }
+.icon-pick { display: flex; gap: 6px; flex-wrap: wrap; }
+.icon-pick button {
+  width: 36px; height: 36px; border-radius: 9px; border: 1px solid var(--border); background: var(--bg-surface);
+  cursor: pointer; display: grid; place-items: center; color: var(--ink-2);
+}
+.icon-pick button.selected { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+/* ---------- Уведомление и подсказка над графиком ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 60;
+  background: var(--ink); color: var(--bg-surface); padding: 10px 16px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500; box-shadow: var(--shadow-modal);
+}
+.toast.error { background: var(--danger); color: #fff; }
+
+.tooltip {
+  position: fixed; z-index: 50; pointer-events: none; background: var(--ink); color: var(--bg-surface); border-radius: 7px;
+  padding: 5px 9px; font-size: 12px; font-weight: 500; white-space: nowrap; transform: translate(-50%, -100%);
+}
+
+/* ---------- Быстрый поиск (Ctrl+K) ---------- */
+.search-trigger {
+  display: flex; align-items: center; gap: 8px; width: 100%; height: 34px; padding: 0 8px 0 10px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-surface);
+  color: var(--ink-3); cursor: pointer; font-size: 13px; box-shadow: var(--shadow-card);
+}
+.search-trigger:hover { border-color: var(--border-strong); color: var(--ink-2); }
+.search-trigger .label { flex: 1; text-align: left; }
+
+.palette-backdrop { place-items: start center; padding-top: 12vh; }
+.palette {
+  width: 100%; max-width: 560px; background: var(--bg-surface); border-radius: 14px;
+  border: 1px solid var(--border); box-shadow: var(--shadow-modal); overflow: hidden;
+}
+.palette-input {
+  display: flex; align-items: center; gap: 10px; padding: 0 16px; height: 52px;
+  border-bottom: 1px solid var(--border); color: var(--ink-3);
+}
+.palette-input input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font-size: 15px; color: var(--ink); }
+.palette-input input::placeholder { color: var(--ink-3); }
+.palette-list { max-height: 360px; overflow-y: auto; padding: 6px; }
+.palette-group { font-size: 11px; font-weight: 500; color: var(--ink-3); padding: 10px 10px 4px; }
+.palette-item {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 0; border-radius: 8px;
+  background: none; cursor: pointer; text-align: left; color: var(--ink); font-size: 14px;
+}
+.palette-item .p-icon { width: 24px; display: grid; place-items: center; color: var(--ink-3); }
+.palette-item .p-label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.palette-item .p-hint { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.palette-item.active { background: var(--bg-subtle); }
+.palette-item.active .p-icon { color: var(--accent); }
+.palette-empty { padding: 28px; text-align: center; color: var(--ink-3); }
+.palette-foot {
+  display: flex; gap: 16px; padding: 8px 16px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--ink-3); background: var(--bg-hover);
+}
+.palette-foot span { display: inline-flex; align-items: center; gap: 4px; }
+
+/* ---------- Переключатель темы ---------- */
+.theme-toggle {
+  display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; width: 100%;
+  border: 0; border-radius: var(--radius-sm); background: none; color: var(--ink-2);
+  font-weight: 500; font-size: 13px; cursor: pointer; text-align: left;
+}
+.theme-toggle:hover { background: var(--bg-sidebar-hover); color: var(--ink); }
+.theme-toggle .label { flex: 1; }
+
+.switch {
+  width: 30px; height: 18px; border-radius: 999px; background: var(--border-strong);
+  position: relative; flex-shrink: 0;
+}
+.switch::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px;
+  border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0, 0, 0, .2);
+}
+[data-theme="dark"] .switch { background: var(--accent); }
+[data-theme="dark"] .switch::after { transform: translateX(12px); }
+
+/* Карточка «Тёмная тема» в профиле (только на телефоне) */
+.theme-card { padding: 0; overflow: hidden; }
+.theme-row {
+  display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 18px;
+  border: 0; background: none; color: var(--ink); text-align: left; cursor: pointer;
+}
+.theme-row .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+
+/* Круглая кнопка на страницах входа и регистрации */
+.theme-fab {
+  position: fixed; top: 20px; right: 20px; z-index: 20; width: 40px; height: 40px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--bg-surface); color: var(--ink-2);
+  display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow-card);
+}
+
+/* Солнце и луна лежат друг на друге, видна только одна */
+.theme-icon { position: relative; width: 18px; height: 18px; flex-shrink: 0; }
+.theme-icon > span { position: absolute; inset: 0; display: grid; place-items: center; }
+.theme-icon .moon { opacity: 0; transform: rotate(-90deg) scale(.4); }
+[data-theme="dark"] .theme-icon .sun  { opacity: 0; transform: rotate(90deg) scale(.4); }
+[data-theme="dark"] .theme-icon .moon { opacity: 1; transform: none; }
+
+[data-theme="dark"] .swatch:not(.selected) { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }

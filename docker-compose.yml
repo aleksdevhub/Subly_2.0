@@ -6,7 +6,6 @@ services:
     build: .
     environment:
       ConnectionStrings__Default: "Data Source=/app/data/subly.db"
-      Jwt__Key: "local-docker-secret-key-at-least-32-characters"
     ports:
       - "8080:8080"
     volumes:

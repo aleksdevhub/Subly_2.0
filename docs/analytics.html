@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Библиотека Telegram Mini Apps -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="js/theme.js"></script>
+  <title>Аналитика платежей — Subly</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Боковое меню (одинаковое на всех страницах приложения) -->
+    <aside class="sidebar">
+      <a href="dashboard.html" class="logo"><span class="logo-mark"><i data-icon="repeat" data-size="16"></i></span>Subly</a>
+
+      <!-- Кнопка быстрого поиска (то же самое — сочетание Ctrl+K) -->
+      <button class="search-trigger" data-palette aria-label="Поиск">
+        <i data-icon="search" data-size="16"></i><span class="label">Поиск</span><kbd>Ctrl K</kbd>
+      </button>
+
+      <nav class="nav">
+        <div class="overline">Обзор</div>
+        <a href="dashboard.html"><i data-icon="home" data-size="18"></i><span>Главная</span></a>
+        <a href="analytics.html" class="active"><i data-icon="chart" data-size="18"></i><span>Аналитика</span></a>
+        <a href="categories.html"><i data-icon="grid" data-size="18"></i><span>Категории</span></a>
+        <a href="profile.html"><i data-icon="user" data-size="18"></i><span>Профиль</span></a>
+      </nav>
+
+      <div class="grow"></div>
+
+      <!-- Бюджет на месяц: заполняется из API -->
+      <div class="budget">
+        <div class="row-between"><span class="caption muted" id="sb-budget-title">Бюджет на месяц</span><span class="caption faint" id="sb-budget-total"></span></div>
+        <div class="h3" id="sb-budget-spent">—</div>
+        <div class="track" id="sb-budget-track"><span style="width:0%"></span></div>
+        <div class="caption faint" id="sb-budget-left">&nbsp;</div>
+      </div>
+
+      <!-- Смена темы: светлая / тёмная -->
+      <button class="theme-toggle" data-theme-toggle aria-label="Тёмная тема">
+        <span class="theme-icon"><span class="sun"><i data-icon="sun" data-size="18"></i></span><span class="moon"><i data-icon="moon" data-size="18"></i></span></span>
+        <span class="label">Тёмная тема</span>
+        <span class="switch"></span>
+      </button>
+
+      <div class="user-row">
+        <div class="avatar" id="sb-avatar"></div>
+        <div class="who">
+          <div class="small medium" id="sb-name"></div>
+          <div class="caption faint" id="sb-email"></div>
+        </div>
+        <button class="logout" id="logout-btn" title="Выйти" aria-label="Выйти"><i data-icon="logout" data-size="18"></i></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-head reveal" style="--i:0">
+        <div class="titles">
+          <h1 class="h1">Аналитика платежей</h1>
+          <p class="muted" id="sub-title">&nbsp;</p>
+        </div>
+        <div class="year-switch">
+          <button id="prev-year" aria-label="Предыдущий год"><i data-icon="chevronL" data-size="18"></i></button>
+          <span class="y" id="year-label"></span>
+          <button id="next-year" aria-label="Следующий год"><i data-icon="chevronR" data-size="18"></i></button>
+        </div>
+        <button class="btn btn-secondary" id="export-btn"><i data-icon="download" data-size="18"></i>Экспорт в CSV</button>
+      </header>
+
+      <!-- Ключевые показатели -->
+      <section class="stats">
+        <article class="card kpi reveal" style="--i:1">
+          <div class="small medium muted" id="k-year-label">&nbsp;</div>
+          <div class="h2" id="k-year">—</div>
+          <div class="caption faint" id="k-year-hint">&nbsp;</div>
+        </article>
+        <article class="card kpi reveal" style="--i:2">
+          <div class="small medium muted" id="k-avg-label">&nbsp;</div>
+          <div class="h2" id="k-avg">—</div>
+          <div class="caption faint" id="k-avg-hint">&nbsp;</div>
+        </article>
+        <article class="card kpi reveal" style="--i:3">
+          <div class="small medium muted" id="k-month-label">&nbsp;</div>
+          <div class="h2" id="k-month">—</div>
+          <div class="caption faint" id="k-month-hint">&nbsp;</div>
+        </article>
+        <article class="card kpi reveal" style="--i:4">
+          <div class="small medium muted" id="k-top-label">&nbsp;</div>
+          <div class="h2" id="k-top">—</div>
+          <div class="caption faint" id="k-top-hint">&nbsp;</div>
+        </article>
+      </section>
+
+      <div class="charts">
+        <!-- Столбчатая диаграмма по месяцам -->
+        <section class="card card-pad chart-card reveal" style="--i:5">
+          <div class="chart-head">
+            <h2 class="h3">Расходы по месяцам</h2>
+            <div class="chart-legend">
+              <span><i class="paid"></i>Оплачено</span>
+              <span><i class="current"></i>Текущий месяц</span>
+              <span><i class="forecast"></i>Прогноз</span>
+            </div>
+          </div>
+          <div id="bars" style="min-height:240px"></div>
+        </section>
+
+        <!-- Структура расходов: общая полоса + список категорий -->
+        <section class="card card-pad chart-card reveal" style="--i:6">
+          <div class="row-between"><h2 class="h3">Структура расходов</h2><span class="small muted" id="donut-year"></span></div>
+          <div class="struct-total"><span class="h2" id="struct-total">—</span><span class="small muted">всего</span></div>
+          <div class="seg" id="struct-bar"></div>
+          <div class="legend" id="legend"></div>
+        </section>
+      </div>
+
+      <!-- История платежей -->
+      <section class="card reveal" style="--i:7; overflow:hidden">
+        <div class="card-head"><h2 class="h3">История платежей</h2><span class="small muted" id="pay-count"></span></div>
+        <div class="table-scroll">
+          <table class="table">
+            <thead>
+              <tr><th>Сервис</th><th>Категория</th><th>Дата</th><th>Способ оплаты</th><th style="text-align:right">Сумма</th><th>Статус</th></tr>
+            </thead>
+            <tbody id="pay-body"></tbody>
+          </table>
+        </div>
+        <div class="empty hidden" id="pay-empty"><i data-icon="card" data-size="28"></i><div id="pay-empty-text"></div></div>
+        <div class="list-foot hidden" id="pay-foot"><button class="link-btn" id="more-pay"></button></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Шаблон строки таблицы платежей -->
+  <template id="tpl-pay-row">
+    <tr>
+      <td><div class="svc"><div class="tile tile-sm" data-f="tile"></div><span data-f="name"></span></div></td>
+      <td data-f="category"></td>
+      <td data-f="date"></td>
+      <td data-f="method"></td>
+      <td class="amount" data-f="amount"></td>
+      <td><span class="badge" data-f="status"></span></td>
+    </tr>
+  </template>
+
+  <!-- Шаблон строки легенды -->
+  <template id="tpl-legend-row">
+    <div class="struct-row">
+      <div class="top">
+        <span class="dot" data-f="dot"></span>
+        <span class="n" data-f="name"></span>
+        <span class="v" data-f="sum"></span>
+        <span class="p" data-f="share"></span>
+      </div>
+      <div class="track"><span data-f="bar" style="width:0%"></span></div>
+    </div>
+  </template>
+
+  <!-- Быстрый поиск (Ctrl+K): поиск по разделам, действиям и подпискам -->
+  <template id="tpl-palette">
+    <div class="palette" role="dialog" aria-modal="true" aria-label="Поиск">
+      <label class="palette-input">
+        <i data-icon="search" data-size="18"></i>
+        <input type="text" placeholder="Поиск подписок, разделов и действий…" autocomplete="off" data-f="input">
+        <kbd>Esc</kbd>
+      </label>
+      <div class="palette-list" data-f="list"></div>
+      <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> выбрать</span><span><kbd>Enter</kbd> открыть</span></div>
+    </div>
+  </template>
+  <script src="js/icons.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/tg.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/palette.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/analytics.js"></script>
+  <script>initAnalytics();</script>
+</body>
+</html>
