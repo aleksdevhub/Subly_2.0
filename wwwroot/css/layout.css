@@ -1,0 +1,167 @@
+/* =========================================================
+   layout.css — расположение блоков: вход и регистрация,
+   боковое меню, основная область и адаптация под телефон.
+   ========================================================= */
+
+/* ---------- Вход и регистрация: форма по центру ---------- */
+.auth { min-height: 100vh; display: grid; place-items: center; position: relative; overflow: hidden; }
+
+/* Мягкое цветное свечение на фоне */
+.auth-glow { position: absolute; inset: 0; pointer-events: none; }
+.auth-glow span { position: absolute; border-radius: 50%; filter: blur(80px); }
+.auth-glow .g1 { width: 520px; height: 520px; left: 50%; top: -260px; margin-left: -420px; background: var(--accent); opacity: .16; }
+.auth-glow .g2 { width: 380px; height: 380px; left: 50%; top: -120px; margin-left: 40px; background: var(--lime); opacity: .22; }
+[data-theme="dark"] .auth-glow .g1 { opacity: .22; }
+[data-theme="dark"] .auth-glow .g2 { opacity: .08; }
+
+.auth-main {
+  position: relative; width: 100%; max-width: 420px; padding: 48px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 24px;
+}
+.auth-logo { font-size: 20px; }
+.auth-form {
+  width: 100%; display: flex; flex-direction: column; gap: 16px;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 28px; box-shadow: var(--shadow-pop);
+}
+.auth-form .head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; text-align: center; }
+.auth-form .head .h1 { font-size: 22px; }
+.auth-form .foot { text-align: center; }
+.auth-perks { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; font-size: 12px; color: var(--ink-2); }
+.auth-perks li { display: inline-flex; align-items: center; gap: 6px; }
+.auth-perks .icon { color: var(--accent); }
+.auth-copy { margin-top: -8px; }
+
+.form-row { display: flex; align-items: center; justify-content: space-between; }
+
+/* ---------- Приложение: меню слева + содержимое ---------- */
+.app { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 240px; flex-shrink: 0; background: var(--bg-sidebar); border-right: 1px solid var(--border);
+  padding: 18px 12px 14px; display: flex; flex-direction: column; gap: 14px;
+  position: sticky; top: 0; height: 100vh;
+}
+.sidebar .logo { padding: 0 8px; margin-bottom: 4px; }
+
+.nav { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; }
+.nav .overline { color: var(--ink-3); padding: 0 10px; margin-bottom: 4px; }
+.nav a {
+  display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 10px; border-radius: var(--radius-sm);
+  color: var(--ink-2); font-weight: 500; font-size: 14px; text-decoration: none; border: 1px solid transparent;
+}
+.nav a .icon { color: var(--ink-3); }
+.nav a:hover { background: var(--bg-sidebar-hover); color: var(--ink); }
+.nav a.active { background: var(--bg-surface); color: var(--ink); border-color: var(--border); box-shadow: var(--shadow-card); }
+.nav a.active .icon { color: var(--accent); }
+
+.sidebar .grow { flex: 1; }
+
+/* Бюджет на месяц — маленькая карточка внизу меню */
+.budget {
+  border: 1px solid var(--border); background: var(--bg-surface); border-radius: var(--radius);
+  padding: 12px; display: flex; flex-direction: column; gap: 6px; box-shadow: var(--shadow-card);
+}
+.budget .row-between span { white-space: nowrap; }
+.budget .track > span { background: var(--accent); }
+.budget .track.over > span { background: var(--danger); }
+
+.user-row { display: flex; align-items: center; gap: 10px; padding: 8px 6px 0; border-top: 1px solid var(--border); }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff;
+  display: grid; place-items: center; font-size: 12px; font-weight: 600; flex-shrink: 0;
+}
+.user-row .who { flex: 1; min-width: 0; }
+.user-row .who div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.logout { border: 0; background: none; color: var(--ink-3); cursor: pointer; padding: 6px; display: grid; border-radius: 7px; }
+.logout:hover { color: var(--ink); background: var(--bg-sidebar-hover); }
+
+/* Основная область страницы: содержимое по центру, не шире 1180px */
+.main {
+  flex: 1; min-width: 0; width: 100%; padding: 32px 40px 48px; display: flex; flex-direction: column; gap: 20px;
+  max-width: 1260px; margin: 0 auto;
+}
+
+.page-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.page-head .titles { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 2px; }
+
+/* Сетки */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.overview { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: 12px; }
+.kpis { display: grid; grid-template-rows: repeat(3, 1fr); gap: 12px; }
+.content-2 { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.content-profile { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+.charts { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; }
+.cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.col { display: flex; flex-direction: column; gap: 16px; }
+
+/* Блоки только для телефона (см. медиазапрос ниже) */
+.mobile-only { display: none; }
+
+/* ---------- Адаптация под разные экраны ---------- */
+@media (max-width: 1200px) {
+  .stats, .cat-grid { grid-template-columns: repeat(2, 1fr); }
+  .content-2, .content-profile, .charts, .overview { grid-template-columns: minmax(0, 1fr); }
+  .kpis { grid-template-rows: none; grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .app { flex-direction: column; }
+
+  /* Меню превращается в верхнюю полосу: логотип, поиск, пользователь */
+  .sidebar {
+    width: 100%; height: auto; position: sticky; top: 0; z-index: 25; border-right: 0; border-bottom: 1px solid var(--border);
+    flex-direction: row; align-items: center; gap: 8px; padding: 10px 14px;
+    background: var(--bg-surface);   /* без размытия: оно сломало бы нижнюю панель (position: fixed) */
+  }
+  .sidebar .logo { flex: 1; margin: 0; padding: 0; }
+  .sidebar .grow, .sidebar .budget, .sidebar .nav .overline, .sidebar .theme-toggle { display: none; }
+  .search-trigger { width: 36px; height: 36px; padding: 0; justify-content: center; }
+  .search-trigger .label, .search-trigger kbd { display: none; }
+  .user-row { border-top: 0; padding: 0; }
+  .user-row .who { display: none; }
+
+  /* Разделы — нижняя панель, как в мобильных приложениях */
+  .sidebar .nav {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; margin: 0;
+    flex-direction: row; gap: 4px; padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--bg-surface) 92%, transparent); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+  }
+  .sidebar .nav a {
+    flex: 1; min-width: 0; height: auto; flex-direction: column; justify-content: center; gap: 3px;
+    padding: 7px 2px; font-size: 11px; text-align: center; border-radius: 10px; box-shadow: none; border: 0;
+  }
+  .sidebar .nav a.active { background: var(--accent-soft); color: var(--accent); }
+  .mobile-only { display: block; }
+
+  .main { padding: 20px 16px 96px; }
+  .toast { bottom: 88px; }
+  .sub-row .date { display: none; }
+  .list-cols .c-date { display: none; }
+}
+
+@media (max-width: 600px) {
+  .stats, .cat-grid, .row-2, .kpis { grid-template-columns: 1fr; }
+  .h1 { font-size: 24px; }
+  .page-head .titles { min-width: 0; flex-basis: 100%; }
+  .page-head .btn-primary { flex: 1; }
+
+  .modal-backdrop { padding: 12px; }
+  .modal { padding: 20px; }
+  .modal .actions .btn { flex: 1; min-width: 0; }
+  .palette-backdrop { padding-top: 12px; }
+
+  .list-head .search { width: 100%; }
+  .hero-foot { grid-template-columns: 1fr 1fr; }
+  .hero-num { font-size: 38px; }
+
+  .profile-card { padding: 18px 18px 6px; }
+  .profile-top { flex-wrap: wrap; gap: 14px; }
+  .profile-top .btn { width: 100%; }
+  .p-field { flex-wrap: wrap; gap: 10px 14px; }
+  .p-field .col-text { flex: 1 1 calc(100% - 60px); }
+  .p-field .btn-ghost { display: none; }
+  .p-field #pwd-btn { width: 100%; }
+  .danger-zone .row .btn { width: 100%; }
+}

@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+appsettings.Local.json
+appsettings.Production.json
+
+# База SQLite создаётся автоматически при первом запуске
+subly.db
+subly.db-shm
+subly.db-wal

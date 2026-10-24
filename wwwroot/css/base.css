@@ -1,0 +1,143 @@
+/* =========================================================
+   base.css — цвета, шрифты и общие правила для всего сайта.
+   Вариант 2: спокойный светлый интерфейс в духе Linear / Stripe / Vercel —
+   много воздуха, тонкие рамки вместо теней, фиолетовый только для главного.
+   ========================================================= */
+
+/* ---------- Переменные (цвета, скругления, тени) ---------- */
+:root {
+  --bg-canvas: #F6F6F7;        /* фон страницы */
+  --bg-surface: #FFFFFF;       /* фон карточек */
+  --bg-subtle: #F1F1F3;        /* светло-серые элементы */
+  --bg-hover: #F8F8F9;         /* фон строки при наведении */
+  --bg-sidebar: #FBFBFC;       /* боковое меню */
+  --bg-sidebar-hover: #EFEFF2;
+
+  --ink: #121216;              /* основной текст */
+  --ink-2: #5F5F6B;            /* второстепенный текст */
+  --ink-3: #9B9BA6;            /* подсказки */
+  --ink-inverse: #FFFFFF;
+
+  --border: #EAEAEE;
+  --border-strong: #DADADF;
+
+  --accent: #5B4CF0;           /* фиолетовый — главные кнопки и акценты */
+  --accent-hover: #4C3DE6;
+  --accent-soft: #EFEDFE;
+  --lime: #C8F169;             /* салатовый — фирменная деталь */
+
+  --danger: #E5484D;
+  --danger-soft: #FDECEC;
+  --success: #1F9D63;
+  --success-soft: #E6F6EE;
+  --warning: #D9821E;
+  --warning-soft: #FDF2E1;
+
+  --focus-ring: rgba(91, 76, 240, .18);
+  --overlay: rgba(18, 18, 22, .4);
+  --chart-bar: #DCD8FC;
+  --chart-hatch: #B9B2F7;
+  --cat-black: #16161D;
+
+  --radius-sm: 8px;
+  --radius: 10px;
+  --radius-lg: 14px;
+
+  --shadow-card: 0 1px 2px rgba(18, 18, 22, .04);
+  --shadow-pop: 0 6px 20px rgba(18, 18, 22, .07);
+  --shadow-modal: 0 24px 64px rgba(18, 18, 22, .18);
+  --shadow-menu: 0 12px 32px rgba(18, 18, 22, .12);
+
+  --font: "Inter", "Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+
+/* ---------- Тёмная тема ----------
+   Включается атрибутом data-theme="dark" у <html> (см. js/theme.js). */
+[data-theme="dark"] {
+  --bg-canvas: #0C0C0F;
+  --bg-surface: #141418;
+  --bg-subtle: #1D1D23;
+  --bg-hover: #18181D;
+  --bg-sidebar: #0F0F13;
+  --bg-sidebar-hover: #1C1C22;
+
+  --ink: #EDEDF0;
+  --ink-2: #A1A1AC;
+  --ink-3: #6B6B76;
+
+  --border: #24242B;
+  --border-strong: #34343D;
+
+  --accent: #7466F5;
+  --accent-hover: #8577F7;
+  --accent-soft: #221F3D;
+
+  --danger-soft: #361C1F;
+  --success-soft: #12291F;
+  --warning-soft: #33271A;
+
+  --focus-ring: rgba(116, 102, 245, .3);
+  --overlay: rgba(0, 0, 0, .6);
+  --chart-bar: #35306A;
+  --chart-hatch: #5A50B8;
+  --cat-black: #5A5A68;
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-pop: 0 6px 20px rgba(0, 0, 0, .35);
+  --shadow-modal: 0 24px 64px rgba(0, 0, 0, .6);
+  --shadow-menu: 0 12px 32px rgba(0, 0, 0, .5);
+
+  color-scheme: dark;
+}
+
+/* ---------- Сброс стилей браузера ---------- */
+* { box-sizing: border-box; }
+
+html, body { margin: 0; min-height: 100%; }
+
+body {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg-canvas);
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;   /* цифры одной ширины — суммы ровно стоят друг под другом */
+}
+
+h1, h2, h3, h4, p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+
+a { color: var(--accent); text-decoration: none; font-weight: 500; }
+a:hover { text-decoration: underline; }
+
+button, input, select { font: inherit; color: inherit; }
+
+svg.icon { flex-shrink: 0; display: block; }
+
+kbd {
+  font-family: var(--font); font-size: 11px; font-weight: 500; color: var(--ink-3);
+  border: 1px solid var(--border); border-bottom-width: 2px; border-radius: 5px;
+  padding: 0 5px; line-height: 17px; background: var(--bg-surface);
+}
+
+.hidden { display: none !important; }
+
+/* ---------- Типографика ---------- */
+.display  { font-size: 40px; line-height: 1.1;  font-weight: 700; letter-spacing: -0.03em; }
+.h1       { font-size: 26px; line-height: 1.2;  font-weight: 600; letter-spacing: -0.025em; }
+.h2       { font-size: 22px; line-height: 1.25; font-weight: 600; letter-spacing: -0.02em; }
+.h3       { font-size: 15px; line-height: 1.35; font-weight: 600; letter-spacing: -0.01em; }
+.num-l    { font-size: 30px; line-height: 1.1;  font-weight: 600; letter-spacing: -0.025em; }
+.small    { font-size: 13px; line-height: 1.45; }
+.caption  { font-size: 12px; line-height: 1.35; font-weight: 500; }
+.overline { font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+
+.medium { font-weight: 500; }
+.muted  { color: var(--ink-2); }
+.faint  { color: var(--ink-3); }
+
+.c-warning { color: var(--warning); }
+.c-success { color: var(--success); }
+.c-danger  { color: var(--danger); }

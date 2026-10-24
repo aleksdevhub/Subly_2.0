@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/js/theme.js"></script>
+  <title>Категории — Subly</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/pages.css">
+  <link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Боковое меню (одинаковое на всех страницах приложения) -->
+    <aside class="sidebar">
+      <a href="/dashboard.html" class="logo"><span class="logo-mark"><i data-icon="repeat" data-size="16"></i></span>Subly</a>
+
+      <!-- Кнопка быстрого поиска (то же самое — сочетание Ctrl+K) -->
+      <button class="search-trigger" data-palette aria-label="Поиск">
+        <i data-icon="search" data-size="16"></i><span class="label">Поиск</span><kbd>Ctrl K</kbd>
+      </button>
+
+      <nav class="nav">
+        <div class="overline">Обзор</div>
+        <a href="/dashboard.html"><i data-icon="home" data-size="18"></i><span>Главная</span></a>
+        <a href="/analytics.html"><i data-icon="chart" data-size="18"></i><span>Аналитика</span></a>
+        <a href="/categories.html" class="active"><i data-icon="grid" data-size="18"></i><span>Категории</span></a>
+        <a href="/profile.html"><i data-icon="user" data-size="18"></i><span>Профиль</span></a>
+      </nav>
+
+      <div class="grow"></div>
+
+      <!-- Бюджет на месяц: заполняется из API -->
+      <div class="budget">
+        <div class="row-between"><span class="caption muted" id="sb-budget-title">Бюджет на месяц</span><span class="caption faint" id="sb-budget-total"></span></div>
+        <div class="h3" id="sb-budget-spent">—</div>
+        <div class="track" id="sb-budget-track"><span style="width:0%"></span></div>
+        <div class="caption faint" id="sb-budget-left">&nbsp;</div>
+      </div>
+
+      <!-- Смена темы: светлая / тёмная -->
+      <button class="theme-toggle" data-theme-toggle aria-label="Тёмная тема">
+        <span class="theme-icon"><span class="sun"><i data-icon="sun" data-size="18"></i></span><span class="moon"><i data-icon="moon" data-size="18"></i></span></span>
+        <span class="label">Тёмная тема</span>
+        <span class="switch"></span>
+      </button>
+
+      <div class="user-row">
+        <div class="avatar" id="sb-avatar"></div>
+        <div class="who">
+          <div class="small medium" id="sb-name"></div>
+          <div class="caption faint" id="sb-email"></div>
+        </div>
+        <button class="logout" id="logout-btn" title="Выйти" aria-label="Выйти"><i data-icon="logout" data-size="18"></i></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-head reveal" style="--i:0">
+        <div class="titles">
+          <h1 class="h1">Категории</h1>
+          <p class="muted" id="cat-sub">&nbsp;</p>
+        </div>
+        <button class="btn btn-secondary" id="new-cat"><i data-icon="plus"></i>Новая категория</button>
+      </header>
+
+      <!-- Сетка карточек категорий (заполняется из API) -->
+      <section class="cat-grid" id="grid"></section>
+
+      <!-- Подписки выбранной категории -->
+      <section class="card hidden reveal" style="--i:2; overflow:hidden" id="detail">
+        <div class="card-head detail-head">
+          <div class="tile tile-md" id="d-tile"></div>
+          <div class="titles">
+            <h2 class="h3" id="d-name"></h2>
+            <div class="small muted" id="d-meta"></div>
+          </div>
+          <button class="btn btn-ghost" id="edit-cat"><i data-icon="edit"></i>Изменить</button>
+          <button class="btn btn-secondary" id="add-sub"><i data-icon="plus"></i>Добавить подписку</button>
+        </div>
+        <div id="detail-list"></div>
+        <div class="empty hidden" id="detail-empty" style="padding:32px">В этой категории пока нет подписок</div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Шаблон карточки категории -->
+  <template id="tpl-cat-card">
+    <article class="card cat-card reveal" tabindex="0">
+      <div class="top">
+        <div class="tile" data-f="tile"></div>
+        <button class="more-btn" data-f="more" aria-label="Действия"><i data-icon="more"></i></button>
+      </div>
+      <div>
+        <div class="medium" data-f="name"></div>
+        <div class="small muted" data-f="count"></div>
+      </div>
+      <div class="sum"><span class="h2" data-f="sum"></span><span class="small muted">в месяц</span></div>
+      <div class="track"><span data-f="bar" style="width:0%"></span></div>
+      <div class="caption faint" data-f="share"></div>
+    </article>
+  </template>
+
+  <!-- Кнопка «Добавить категорию» в конце сетки -->
+  <template id="tpl-cat-add">
+    <button class="cat-add reveal"><span class="tile tile-soft"><i data-icon="plus" data-size="22"></i></span>Добавить категорию</button>
+  </template>
+
+  <!-- Шаблон строки подписки: JS копирует его для каждой подписки -->
+  <template id="tpl-sub-row">
+    <div class="sub-row">
+      <div class="tile" data-f="tile"></div>
+      <div class="name">
+        <div class="medium" data-f="name"></div>
+        <div class="small muted" data-f="meta"></div>
+      </div>
+      <div class="date">
+        <div class="medium" data-f="date"></div>
+        <div class="small muted" data-f="due"></div>
+      </div>
+      <div class="price">
+        <div class="medium" data-f="price"></div>
+        <div class="small muted" data-f="period"></div>
+      </div>
+      <button class="more-btn" data-f="more" aria-label="Действия"><i data-icon="more"></i></button>
+    </div>
+  </template>
+
+  <!-- Окно создания / изменения категории -->
+  <template id="modal-category">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="tile tile-lg" data-f="preview"></div>
+        <button type="button" class="close-btn" data-close aria-label="Закрыть"><i data-icon="x" data-size="18"></i></button>
+      </div>
+      <h2 class="h2" data-f="title">Новая категория</h2>
+      <form id="cat-form" novalidate>
+        <div id="cat-msg"></div>
+          <div class="field">
+            <label for="cat-name">Название</label>
+            <div class="input-wrap">
+              <i data-icon="grid"></i>
+              <input id="cat-name" type="text" placeholder="Например, Спорт" autocomplete="off" maxlength="60">
+            </div>
+            <div class="hint hidden" id="cat-name-hint"></div>
+          </div>
+        <div class="field"><label>Цвет</label><div class="swatches" id="swatches"></div></div>
+        <div class="field"><label>Иконка</label><div class="icon-pick" id="icon-pick"></div></div>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary" data-close>Отмена</button>
+          <button type="submit" class="btn btn-primary" id="cat-save">Создать</button>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <!-- Окно добавления / изменения подписки -->
+  <template id="modal-subscription">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="tile tile-lg tile-accent" data-f="head-icon"></div>
+        <button type="button" class="close-btn" data-close aria-label="Закрыть"><i data-icon="x" data-size="18"></i></button>
+      </div>
+      <div class="modal-title">
+        <h2 class="h2" data-f="title">Новая подписка</h2>
+        <p class="muted" data-f="subtitle">Укажите стоимость и дату следующего списания — остальное Subly посчитает сам.</p>
+      </div>
+      <form id="sub-form" novalidate>
+        <div id="sub-msg"></div>
+          <div class="field">
+            <label for="sub-name">Название</label>
+            <div class="input-wrap">
+              <i data-icon="repeat"></i>
+              <input id="sub-name" type="text" placeholder="Например, Яндекс Плюс" autocomplete="off">
+            </div>
+            <div class="hint hidden" id="sub-name-hint"></div>
+          </div>
+          <div class="field">
+            <label for="sub-cat">Категория</label>
+            <div class="input-wrap">
+              <i data-icon="grid"></i>
+              <select id="sub-cat"></select>
+              <i data-icon="chevronD" data-size="18"></i>
+            </div>
+          </div>
+          <div class="row-2">
+          <div class="field">
+            <label for="sub-price">Стоимость, ₽</label>
+            <div class="input-wrap">
+              <i data-icon="card"></i>
+              <input id="sub-price" type="number" placeholder="299" autocomplete="off" min="1" step="0.01" inputmode="decimal">
+            </div>
+            <div class="hint hidden" id="sub-price-hint"></div>
+          </div>
+            <div class="field">
+              <label for="sub-period">Период</label>
+              <div class="input-wrap">
+                <select id="sub-period">
+                  <option value="monthly">Ежемесячно</option>
+                  <option value="yearly">Ежегодно</option>
+                </select>
+                <i data-icon="chevronD" data-size="18"></i>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="sub-date">Дата следующего списания</label>
+            <div class="input-wrap">
+              <i data-icon="calendar"></i>
+              <input id="sub-date" type="date" placeholder="" autocomplete="off">
+            </div>
+            <div class="hint" id="sub-date-hint">Если дата уже прошла, прошедшие списания попадут в историю платежей</div>
+          </div>
+          <div class="field">
+            <label for="sub-method">Способ оплаты (необязательно)</label>
+            <div class="input-wrap">
+              <i data-icon="card"></i>
+              <input id="sub-method" type="text" placeholder="Visa •• 4417" autocomplete="off">
+            </div>
+            <div class="hint hidden" id="sub-method-hint"></div>
+          </div>
+          <label class="checkbox hidden" id="sub-active-wrap">
+            <input type="checkbox" id="sub-active">
+            <span class="box"><i data-icon="check" data-size="14" data-stroke="3"></i></span>
+            <span>Подписка активна — учитывать списания</span>
+          </label>
+          <div class="actions">
+            <button type="button" class="btn btn-secondary" data-close>Отмена</button>
+            <button type="submit" class="btn btn-primary" id="sub-save">Добавить</button>
+          </div>
+      </form>
+    </div>
+  </template>
+
+  <!-- Окно подтверждения (например, «Удалить подписку?») -->
+  <template id="modal-confirm">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="tile tile-lg tile-danger"><i data-icon="alert" data-size="24"></i></div>
+        <button type="button" class="close-btn" data-close aria-label="Закрыть"><i data-icon="x" data-size="18"></i></button>
+      </div>
+      <div class="modal-title">
+        <h2 class="h2" data-f="title"></h2>
+        <p class="muted" data-f="text"></p>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" data-close>Отмена</button>
+        <button type="button" class="btn btn-danger" data-f="ok">Удалить</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- Быстрый поиск (Ctrl+K): поиск по разделам, действиям и подпискам -->
+  <template id="tpl-palette">
+    <div class="palette" role="dialog" aria-modal="true" aria-label="Поиск">
+      <label class="palette-input">
+        <i data-icon="search" data-size="18"></i>
+        <input type="text" placeholder="Поиск подписок, разделов и действий…" autocomplete="off" data-f="input">
+        <kbd>Esc</kbd>
+      </label>
+      <div class="palette-list" data-f="list"></div>
+      <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> выбрать</span><span><kbd>Enter</kbd> открыть</span></div>
+    </div>
+  </template>
+  <script src="/js/icons.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/layout.js"></script>
+  <script src="/js/palette.js"></script>
+  <script src="/js/subscription-form.js"></script>
+  <script src="/js/categories.js"></script>
+  <script>initCategories();</script>
+</body>
+</html>

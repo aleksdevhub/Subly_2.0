@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/js/theme.js"></script>
+  <title>Профиль — Subly</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/pages.css">
+  <link rel="stylesheet" href="/css/animations.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Боковое меню (одинаковое на всех страницах приложения) -->
+    <aside class="sidebar">
+      <a href="/dashboard.html" class="logo"><span class="logo-mark"><i data-icon="repeat" data-size="16"></i></span>Subly</a>
+
+      <!-- Кнопка быстрого поиска (то же самое — сочетание Ctrl+K) -->
+      <button class="search-trigger" data-palette aria-label="Поиск">
+        <i data-icon="search" data-size="16"></i><span class="label">Поиск</span><kbd>Ctrl K</kbd>
+      </button>
+
+      <nav class="nav">
+        <div class="overline">Обзор</div>
+        <a href="/dashboard.html"><i data-icon="home" data-size="18"></i><span>Главная</span></a>
+        <a href="/analytics.html"><i data-icon="chart" data-size="18"></i><span>Аналитика</span></a>
+        <a href="/categories.html"><i data-icon="grid" data-size="18"></i><span>Категории</span></a>
+        <a href="/profile.html" class="active"><i data-icon="user" data-size="18"></i><span>Профиль</span></a>
+      </nav>
+
+      <div class="grow"></div>
+
+      <!-- Бюджет на месяц: заполняется из API -->
+      <div class="budget">
+        <div class="row-between"><span class="caption muted" id="sb-budget-title">Бюджет на месяц</span><span class="caption faint" id="sb-budget-total"></span></div>
+        <div class="h3" id="sb-budget-spent">—</div>
+        <div class="track" id="sb-budget-track"><span style="width:0%"></span></div>
+        <div class="caption faint" id="sb-budget-left">&nbsp;</div>
+      </div>
+
+      <!-- Смена темы: светлая / тёмная -->
+      <button class="theme-toggle" data-theme-toggle aria-label="Тёмная тема">
+        <span class="theme-icon"><span class="sun"><i data-icon="sun" data-size="18"></i></span><span class="moon"><i data-icon="moon" data-size="18"></i></span></span>
+        <span class="label">Тёмная тема</span>
+        <span class="switch"></span>
+      </button>
+
+      <div class="user-row">
+        <div class="avatar" id="sb-avatar"></div>
+        <div class="who">
+          <div class="small medium" id="sb-name"></div>
+          <div class="caption faint" id="sb-email"></div>
+        </div>
+        <button class="logout" id="logout-btn" title="Выйти" aria-label="Выйти"><i data-icon="logout" data-size="18"></i></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-head reveal" style="--i:0">
+        <div class="titles">
+          <h1 class="h1">Профиль</h1>
+          <p class="muted">Личные данные, безопасность и расходы на подписки</p>
+        </div>
+      </header>
+
+      <div class="content-profile">
+        <div class="col">
+          <!-- Личные данные -->
+          <section class="card profile-card reveal" style="--i:1">
+            <div class="profile-top">
+              <div class="avatar avatar-lg" id="p-avatar"></div>
+              <div class="who">
+                <div class="name-line">
+                  <h2 class="h2" id="p-name-title"></h2>
+                  <span class="badge badge-accent hidden" id="p-role">Администратор</span>
+                </div>
+                <div class="small muted" id="p-since"></div>
+              </div>
+              <button class="btn btn-secondary" data-edit><i data-icon="edit"></i>Редактировать</button>
+            </div>
+
+            <div class="p-field">
+              <div class="tile tile-soft"><i data-icon="user"></i></div>
+              <div class="col-text"><div class="overline faint">Имя</div><div class="val" id="p-name"></div></div>
+              <button class="btn btn-ghost" data-edit>Изменить</button>
+            </div>
+            <div class="p-field">
+              <div class="tile tile-soft"><i data-icon="mail"></i></div>
+              <div class="col-text"><div class="overline faint">Электронная почта</div><div class="val" id="p-email"></div></div>
+              <button class="btn btn-ghost" data-edit>Изменить</button>
+            </div>
+            <div class="p-field">
+              <div class="tile tile-soft"><i data-icon="lock"></i></div>
+              <div class="col-text">
+                <div class="overline faint">Пароль</div>
+                <div class="val"><span class="dots">••••••••••</span><span class="small faint" style="font-weight:400">хранится в зашифрованном виде</span></div>
+              </div>
+              <button class="btn btn-secondary" id="pwd-btn"><i data-icon="key"></i>Сменить пароль</button>
+            </div>
+            <div class="p-field">
+              <div class="tile tile-soft"><i data-icon="card"></i></div>
+              <div class="col-text"><div class="overline faint">Бюджет на подписки в месяц</div><div class="val" id="p-budget"></div></div>
+              <button class="btn btn-ghost" data-edit>Изменить</button>
+            </div>
+          </section>
+
+          <!-- Тема оформления: эта карточка видна только на телефоне,
+               на компьютере тема меняется переключателем в меню слева -->
+          <section class="card theme-card mobile-only reveal" style="--i:2">
+            <button class="theme-row" data-theme-toggle aria-label="Тёмная тема">
+              <span class="tile tile-soft"><span class="theme-icon"><span class="sun"><i data-icon="sun"></i></span><span class="moon"><i data-icon="moon"></i></span></span></span>
+              <span class="text">
+                <span class="medium">Тёмная тема</span>
+                <span class="small muted">Оформление сайта на этом устройстве</span>
+              </span>
+              <span class="switch"></span>
+            </button>
+          </section>
+
+          <!-- Удаление аккаунта -->
+          <section class="card danger-zone reveal" style="--i:2">
+            <div class="row">
+              <div class="tile tile-danger"><i data-icon="trash"></i></div>
+              <div class="text">
+                <h3 class="h3">Удаление аккаунта</h3>
+                <p class="small muted">Профиль, подписки и история платежей будут удалены навсегда. Перед удалением мы попросим подтвердить действие паролем.</p>
+              </div>
+              <button class="btn btn-danger-outline" id="delete-btn"><i data-icon="trash"></i>Удалить аккаунт</button>
+            </div>
+          </section>
+        </div>
+
+        <div class="col">
+          <!-- Сколько потрачено в этом месяце -->
+          <section class="spend reveal" style="--i:3">
+            <div class="head">
+              <span class="overline faint">Потрачено в этом месяце</span>
+              <span class="badge badge-accent" id="s-month"></span>
+            </div>
+            <div class="display big" id="s-total">—</div>
+            <div class="small faint" id="s-sub"></div>
+            <div class="track"><span id="s-bar" style="width:0%"></span></div>
+            <div class="line"><span class="dot" style="background:var(--lime)"></span><span class="l">Уже оплачено</span><span class="medium" id="s-paid"></span></div>
+            <div class="line"><span class="dot" style="background:var(--ink-2)"></span><span class="l">Предстоит до конца месяца</span><span class="medium" id="s-upcoming"></span></div>
+            <hr>
+            <div class="line"><span class="l" id="s-cmp-label">По сравнению с прошлым месяцем</span><span id="s-cmp"></span></div>
+          </section>
+
+          <!-- Статистика аккаунта -->
+          <section class="card stats-card reveal" style="--i:4">
+            <h3 class="h3" style="margin-bottom:8px">Статистика аккаунта</h3>
+            <div class="stat-line"><span class="l">Активные подписки</span><span class="v" id="a-active"></span></div>
+            <div class="stat-line"><span class="l">Категории с подписками</span><span class="v" id="a-cats"></span></div>
+            <div class="stat-line"><span class="l">Потрачено с начала года</span><span class="v" id="a-year"></span></div>
+            <div class="stat-line"><span class="l">Средняя подписка</span><span class="v" id="a-avg"></span></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Окно «Личные данные» -->
+  <template id="modal-edit">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="tile tile-lg tile-accent"><i data-icon="user" data-size="24"></i></div>
+        <button type="button" class="close-btn" data-close aria-label="Закрыть"><i data-icon="x" data-size="18"></i></button>
+      </div>
+      <h2 class="h2">Личные данные</h2>
+      <form id="edit-form" novalidate>
+        <div id="edit-msg"></div>
+          <div class="field">
+            <label for="e-name">Имя</label>
+            <div class="input-wrap">
+              <i data-icon="user"></i>
+              <input id="e-name" type="text" placeholder="" autocomplete="off">
+            </div>
+            <div class="hint hidden" id="e-name-hint"></div>
+          </div>
+          <div class="field">
+            <label for="e-email">Электронная почта</label>
+            <div class="input-wrap">
+              <i data-icon="mail"></i>
+              <input id="e-email" type="email" placeholder="" autocomplete="off">
+            </div>
+            <div class="hint hidden" id="e-email-hint"></div>
+          </div>
+          <div class="field">
+            <label for="e-budget">Бюджет на подписки в месяц, ₽</label>
+            <div class="input-wrap">
+              <i data-icon="card"></i>
+              <input id="e-budget" type="number" placeholder="" autocomplete="off" min="0" step="100">
+            </div>
+            <div class="hint" id="e-budget-hint">0 — без ограничения</div>
+          </div>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary" data-close>Отмена</button>
+          <button type="submit" class="btn btn-primary" id="e-save">Сохранить</button>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <!-- Окно «Смена пароля» -->
+  <template id="modal-password">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="tile tile-lg tile-accent"><i data-icon="key" data-size="24"></i></div>
+        <button type="button" class="close-btn" data-close aria-label="Закрыть"><i data-icon="x" data-size="18"></i></button>
+      </div>
+      <div class="modal-title">
+        <h2 class="h2">Смена пароля</h2>
+        <p class="muted">Введите текущий пароль и придумайте новый.</p>
+      </div>
+      <form id="pwd-form" novalidate>
+        <div id="pwd-msg"></div>
+          <div class="field">
+            <label for="p-current">Текущий пароль</label>
+            <div class="input-wrap">
+              <i data-icon="lock"></i>
+              <input id="p-current" type="password" placeholder="" autocomplete="off">
+              <button type="button" class="toggle-pwd" data-for="p-current" aria-label="Показать пароль"><i data-icon="eye"></i></button>
+            </div>
+            <div class="hint hidden" id="p-current-hint"></div>
+          </div>
+          <div class="field">
+            <label for="p-new">Новый пароль</label>
+            <div class="input-wrap">
+              <i data-icon="lock"></i>
+              <input id="p-new" type="password" placeholder="" autocomplete="off">
+              <button type="button" class="toggle-pwd" data-for="p-new" aria-label="Показать пароль"><i data-icon="eye"></i></button>
+            </div>
+            <div class="hint hidden" id="p-new-hint"></div>
+          </div>
+        <div class="strength">
+          <div class="segs"><i></i><i></i><i></i><i></i></div>
+          <div class="row"><span class="small medium faint" id="s-label">Введите новый пароль</span><span class="small faint" id="s-len"></span></div>
+          <ul class="req">
+            <li data-req="length"><i data-icon="x" data-size="16"></i>Минимум 8 символов</li>
+            <li data-req="mixed"><i data-icon="x" data-size="16"></i>Буквы и цифры</li>
+            <li data-req="diff"><i data-icon="x" data-size="16"></i>Отличается от текущего пароля</li>
+          </ul>
+        </div>
+          <div class="field">
+            <label for="p-repeat">Повторите новый пароль</label>
+            <div class="input-wrap">
+              <i data-icon="lock"></i>
+              <input id="p-repeat" type="password" placeholder="" autocomplete="off">
+              <button type="button" class="toggle-pwd" data-for="p-repeat" aria-label="Показать пароль"><i data-icon="eye"></i></button>
+            </div>
+            <div class="hint hidden" id="p-repeat-hint"></div>
+          </div>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary" data-close>Отмена</button>
+          <button type="submit" class="btn btn-primary" id="p-save" disabled>Сохранить пароль</button>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <!-- Окно «Удалить аккаунт» с подтверждением -->
+  <template id="modal-delete">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="modal-head">
+        <div class="tile tile-lg tile-danger"><i data-icon="alert" data-size="24"></i></div>
+        <button type="button" class="close-btn" data-close aria-label="Закрыть"><i data-icon="x" data-size="18"></i></button>
+      </div>
+      <div class="modal-title">
+        <h2 class="h2">Удалить аккаунт навсегда?</h2>
+        <p class="muted">Это действие нельзя отменить. Вместе с аккаунтом будут удалены:</p>
+      </div>
+      <ul class="loss-list">
+        <li><i data-icon="x" data-size="16"></i><span data-f="subs"></span></li>
+        <li><i data-icon="x" data-size="16"></i><span data-f="payments"></span></li>
+        <li><i data-icon="x" data-size="16"></i><span>Категории и настройки бюджета</span></li>
+      </ul>
+      <form id="del-form" novalidate>
+        <div id="del-msg"></div>
+          <div class="field">
+            <label for="d-password">Пароль от аккаунта</label>
+            <div class="input-wrap">
+              <i data-icon="lock"></i>
+              <input id="d-password" type="password" placeholder="" autocomplete="off">
+              <button type="button" class="toggle-pwd" data-for="d-password" aria-label="Показать пароль"><i data-icon="eye"></i></button>
+            </div>
+            <div class="hint hidden" id="d-password-hint"></div>
+          </div>
+          <div class="field">
+            <label for="d-word">Введите слово УДАЛИТЬ для подтверждения</label>
+            <div class="input-wrap">
+              <i data-icon="edit"></i>
+              <input id="d-word" type="text" placeholder="УДАЛИТЬ" autocomplete="off">
+            </div>
+            <div class="hint hidden" id="d-word-hint"></div>
+          </div>
+        <label class="checkbox danger">
+          <input type="checkbox" id="d-agree">
+          <span class="box"><i data-icon="check" data-size="14" data-stroke="3"></i></span>
+          <span>Я понимаю, что восстановить аккаунт и данные будет невозможно</span>
+        </label>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary" data-close>Отмена</button>
+          <button type="submit" class="btn btn-danger" id="d-submit" disabled><i data-icon="trash"></i>Удалить аккаунт</button>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <!-- Быстрый поиск (Ctrl+K): поиск по разделам, действиям и подпискам -->
+  <template id="tpl-palette">
+    <div class="palette" role="dialog" aria-modal="true" aria-label="Поиск">
+      <label class="palette-input">
+        <i data-icon="search" data-size="18"></i>
+        <input type="text" placeholder="Поиск подписок, разделов и действий…" autocomplete="off" data-f="input">
+        <kbd>Esc</kbd>
+      </label>
+      <div class="palette-list" data-f="list"></div>
+      <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> выбрать</span><span><kbd>Enter</kbd> открыть</span></div>
+    </div>
+  </template>
+  <script src="/js/icons.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/layout.js"></script>
+  <script src="/js/palette.js"></script>
+  <script src="/js/profile.js"></script>
+  <script>initProfile();</script>
+</body>
+</html>

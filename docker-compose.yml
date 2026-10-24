@@ -1,0 +1,16 @@
+# Запуск в Docker:  docker compose up --build
+# Сайт: http://localhost:8080   Swagger: http://localhost:8080/swagger
+# База SQLite хранится в томе subly-data (файл /app/data/subly.db)
+services:
+  app:
+    build: .
+    environment:
+      ConnectionStrings__Default: "Data Source=/app/data/subly.db"
+      Jwt__Key: "local-docker-secret-key-at-least-32-characters"
+    ports:
+      - "8080:8080"
+    volumes:
+      - subly-data:/app/data
+
+volumes:
+  subly-data:

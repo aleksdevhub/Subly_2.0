@@ -1,0 +1,171 @@
+/* =========================================================
+   animations.css — анимации, чтобы сайт был «живым».
+   Все анимации короткие (0.15–0.9 с) и не мешают работе.
+   Если в системе включено «Уменьшить движение», они отключаются.
+   ========================================================= */
+
+/* ---------- Ключевые кадры ---------- */
+
+/* Появление снизу вверх */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Плавное появление */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Окно «выпрыгивает» */
+@keyframes pop {
+  from { opacity: 0; transform: translateY(10px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Столбик графика растёт снизу */
+@keyframes grow-up {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* Медленное «парение» декоративных кругов */
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(-12px, 16px); }
+}
+
+/* Пульсирующая точка на колокольчике */
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(229, 72, 77, .5); }
+  70%  { box-shadow: 0 0 0 7px rgba(229, 72, 77, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0); }
+}
+
+/* Переливание «скелетона» во время загрузки */
+@keyframes shimmer {
+  to { background-position: -200% 0; }
+}
+
+/* Галочка в чекбоксе */
+@keyframes check-pop {
+  0%   { transform: scale(.4); }
+  70%  { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- Появление элементов при загрузке страницы ---------- */
+/* Элементу с классом .reveal задаётся номер --i — так блоки появляются по очереди */
+.reveal {
+  animation: rise .5s cubic-bezier(.2, .7, .2, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+.auth-form > * { animation: rise .45s cubic-bezier(.2, .7, .2, 1) both; }
+.auth-form > *:nth-child(2) { animation-delay: .05s; }
+.auth-form > *:nth-child(3) { animation-delay: .1s; }
+.auth-form > *:nth-child(4) { animation-delay: .15s; }
+.auth-form > *:nth-child(5) { animation-delay: .2s; }
+.auth-form > *:nth-child(6) { animation-delay: .25s; }
+.auth-form > *:nth-child(n+7) { animation-delay: .3s; }
+
+/* ---------- Наведение и нажатие ---------- */
+.btn, .icon-btn, .chip, .close-btn, .more-btn, .link-btn, .swatch, .icon-pick button,
+.year-switch button, .logout {
+  transition: background-color .15s, border-color .15s, color .15s, box-shadow .2s, transform .15s, opacity .15s;
+}
+.btn:active:not(:disabled), .icon-btn:active, .chip:active { transform: scale(.97); }
+.btn-primary:hover:not(:disabled) { box-shadow: 0 4px 14px rgba(91, 76, 240, .3); }
+.btn-danger:hover:not(:disabled)  { box-shadow: 0 4px 14px rgba(229, 72, 77, .25); }
+.swatch:hover { transform: scale(1.08); }
+
+/* Карточки слегка приподнимаются при наведении */
+.kpi, .cat-card, .cat-add, .hero, .spend {
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.kpi:hover, .cat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+
+/* Строки подписок */
+.sub-row { transition: background-color .15s; }
+.sub-row:hover { background: var(--bg-hover); }
+.sub-row .tile { transition: transform .2s ease; }
+.sub-row:hover .tile { transform: scale(1.06); }
+
+/* Пункты меню: иконка чуть сдвигается */
+.nav a { transition: background-color .15s, color .15s; }
+.nav a .icon { transition: transform .2s ease; }
+.nav a:hover .icon { transform: translateX(2px); }
+
+/* Логотип поворачивается при наведении */
+.logo-mark { transition: transform .4s cubic-bezier(.2, .7, .2, 1); }
+.logo:hover .logo-mark { transform: rotate(180deg); }
+
+/* Поля ввода */
+.input-wrap { transition: border-color .15s, box-shadow .2s; }
+.checkbox .box { transition: background-color .15s, border-color .15s; }
+.checkbox input:checked + .box .icon { animation: check-pop .25s ease both; }
+
+/* ---------- Полосы прогресса растут до нужной ширины ---------- */
+.track > span { transition: width .9s cubic-bezier(.2, .7, .2, 1); }
+.strength .segs i { transition: background-color .25s; }
+
+/* ---------- Графики ---------- */
+.bar-chart .bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  animation: grow-up .7s cubic-bezier(.2, .7, .2, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+  transition: opacity .15s;
+}
+.bar-chart .bar:hover { opacity: .8; }
+
+/* Куски полосы категорий плавно растут до своей доли */
+.seg > span { transition: flex-grow .9s cubic-bezier(.2, .7, .2, 1); }
+
+/* Дни в ленте «Ближайшие 14 дней» появляются слева направо */
+.day { animation: rise .4s cubic-bezier(.2, .7, .2, 1) both; animation-delay: calc(var(--i, 0) * 30ms); }
+.day .tile { transition: transform .2s ease; }
+.day:hover .tile { transform: scale(1.12); }
+
+/* ---------- Окна, меню, уведомления ---------- */
+.modal-backdrop { animation: fade-in .18s ease-out; }
+.modal { animation: pop .22s cubic-bezier(.2, .7, .2, 1); }
+.menu { animation: pop .14s ease-out; transform-origin: top right; }
+.palette { animation: pop .16s cubic-bezier(.2, .7, .2, 1); }
+.palette-item, .search-trigger, .theme-toggle { transition: background-color .12s, color .12s, border-color .12s; }
+.toast { animation: rise .25s ease-out; }
+
+/* ---------- Мелкие детали ---------- */
+.icon-btn .dot:not(.hidden) { animation: pulse 2s infinite; }
+.skeleton { animation: shimmer 1.2s infinite; }
+.auth-glow .g1 { animation: float 14s ease-in-out infinite; }
+.auth-glow .g2 { animation: float 11s ease-in-out infinite reverse; }
+
+/* ---------- Смена темы ---------- */
+/* Солнце/луна поворачиваются, кружок переключателя едет вправо */
+.theme-icon > span { transition: transform .5s cubic-bezier(.34, 1.56, .64, 1), opacity .3s ease; }
+.switch::after { transition: transform .35s cubic-bezier(.34, 1.56, .64, 1); }
+.switch { transition: background-color .3s ease; }
+.theme-fab { transition: transform .2s ease, background-color .3s ease, border-color .3s ease; }
+.theme-fab:hover { transform: rotate(-12deg) scale(1.06); }
+.theme-fab:active { transform: scale(.92); }
+
+/* Новая тема «растекается» кругом от кнопки (View Transitions API, круг задаётся в theme.js) */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* Запасной вариант для старых браузеров: цвета плавно перетекают */
+.theme-fade, .theme-fade * {
+  transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease !important;
+}
+
+/* ---------- Если пользователь отключил анимации в системе ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-duration: .01ms !important;
+  }
+}
