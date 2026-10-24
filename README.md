@@ -194,7 +194,7 @@ erDiagram
 данные каждого пользователя хранятся в облаке Telegram, вход — по аккаунту Telegram.
 
 1. **GitHub Pages.** Залейте проект на GitHub → Settings → Pages → Source: *Deploy from a branch* →
-   Branch `main`, папка `/docs` → Save. Через 1–2 минуты сайт откроется по адресу
+   Branch `master`, папка `/docs` → Save. Через 1–2 минуты сайт откроется по адресу
    `https://aleksdevhub.github.io/Subly_2.0/`.
 2. **Бот.** В Telegram откройте @BotFather → `/newbot` → придумайте имя и ник бота (должен заканчиваться на `bot`).
 3. **Кнопка приложения.** В @BotFather: `/mybots` → ваш бот → *Bot Settings* → *Menu Button* →

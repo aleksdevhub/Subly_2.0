@@ -9,17 +9,17 @@ const Auth = {
   token: 'telegram',
   get user() {
     try {
-      const saved = JSON.parse(localStorage.getItem('subly_user') || 'null');
+      const saved = JSON.parse(localStorage.getItem('subly_user_' + Store.USER_KEY) || 'null');
       if (saved) return saved;
     } catch { /* ignore */ }
     const tg = Store.telegramUser();
     return { name: tg.name, email: tg.username ? '@' + tg.username : 'Telegram', photoUrl: tg.photoUrl };
   },
   save(_token, user) {
-    try { localStorage.setItem('subly_user', JSON.stringify(user)); } catch { /* ignore */ }
+    try { localStorage.setItem('subly_user_' + Store.USER_KEY, JSON.stringify(user)); } catch { /* ignore */ }
   },
   clear() {
-    try { localStorage.removeItem('subly_user'); } catch { /* ignore */ }
+    try { localStorage.removeItem('subly_user_' + Store.USER_KEY); } catch { /* ignore */ }
   },
 };
 

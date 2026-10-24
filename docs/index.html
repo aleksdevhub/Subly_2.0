@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Subly</title>
+  <!-- Библиотека Telegram запоминает данные пользователя до перехода на главную -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
-    // Мини-приложение сразу открывает главную
-    location.replace('dashboard.html');
+    // Telegram передаёт данные пользователя в адресе после «#» — переносим их на главную
+    location.replace('dashboard.html' + location.hash);
   </script>
 </head>
 <body></body>

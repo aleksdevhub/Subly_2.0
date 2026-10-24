@@ -66,6 +66,8 @@ const Store = (() => {
   };
 
   const backend = IN_TELEGRAM ? cloud : local;
+  // Чей это кэш: у каждого пользователя Telegram свой, у «гостя» в браузере — свой
+  const USER_KEY = IN_TELEGRAM && TG.initDataUnsafe && TG.initDataUnsafe.user ? 'tg' + TG.initDataUnsafe.user.id : 'guest';
 
   // ---------- Даты (формат ГГГГ-ММ-ДД, как в базе на сервере) ----------
   const pad = (n) => String(n).padStart(2, '0');
@@ -137,7 +139,7 @@ const Store = (() => {
     if (state) return state;
     // Пока открыта вкладка, держим копию в sessionStorage — переходы между страницами быстрее
     try {
-      const cached = sessionStorage.getItem(KEY + '_cache');
+      const cached = sessionStorage.getItem(`${KEY}_cache_${USER_KEY}`);
       if (cached) { state = JSON.parse(cached); return state; }
     } catch { /* ignore */ }
     let text = null;
@@ -149,7 +151,7 @@ const Store = (() => {
   }
 
   function cacheSession() {
-    try { sessionStorage.setItem(KEY + '_cache', JSON.stringify(state)); } catch { /* ignore */ }
+    try { sessionStorage.setItem(`${KEY}_cache_${USER_KEY}`, JSON.stringify(state)); } catch { /* ignore */ }
   }
 
   async function save() {
@@ -496,5 +498,5 @@ const Store = (() => {
     };
   }
 
-  return { request, load, IN_TELEGRAM, telegramUser };
+  return { request, load, IN_TELEGRAM, USER_KEY, telegramUser };
 })();
