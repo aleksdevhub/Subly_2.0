@@ -160,8 +160,25 @@
   transition: background-color .45s ease, color .45s ease, border-color .45s ease, fill .45s ease, stroke .45s ease !important;
 }
 
+/* ---------- Плавные переходы между разделами (как в приложении) ----------
+   Браузер делает «снимок» старой страницы и плавно сменяет его новой.
+   Меню (на телефоне — нижняя панель) остаётся на месте, меняется только содержимое. */
+@view-transition { navigation: auto; }
+
+.sidebar { view-transition-name: sidebar; }
+.sidebar .nav { view-transition-name: tabbar; }
+
+@keyframes page-out { to { opacity: 0; transform: translateY(-6px); } }
+@keyframes page-in  { from { opacity: 0; transform: translateY(10px); } }
+
+html:not(.theme-switching)::view-transition-old(root) { animation: page-out .16s ease-in both; }
+html:not(.theme-switching)::view-transition-new(root) { animation: page-in .28s cubic-bezier(.2, .7, .2, 1) both; }
+::view-transition-group(sidebar), ::view-transition-group(tabbar) { animation-duration: .2s; }
+
 /* ---------- Если пользователь отключил анимации в системе ---------- */
 @media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
   *, *::before, *::after {
     animation-duration: .01ms !important;
     animation-iteration-count: 1 !important;

@@ -26,6 +26,19 @@
   paint();
   new MutationObserver(paint).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
+  // Лёгкий «тап» при нажатиях: вкладки и фильтры — как переключатель, кнопки — как нажатие
+  if (TG.HapticFeedback) {
+    document.addEventListener('click', (e) => {
+      const el = e.target.closest('.nav a, .chip, .year-switch button, .swatch, .icon-pick button, ' +
+        '.btn, .icon-btn, .more-btn, .cat-card, .cat-add, .theme-row, .theme-toggle, .palette-item, .menu button, .search-trigger');
+      if (!el || el.disabled) return;
+      try {
+        if (el.matches('.nav a, .chip, .year-switch button, .swatch, .icon-pick button')) TG.HapticFeedback.selectionChanged();
+        else TG.HapticFeedback.impactOccurred('light');
+      } catch { /* старый клиент Telegram */ }
+    }, true);
+  }
+
   // Лёгкая вибрация: успех — при сохранении, ошибка — при ошибке
   if (typeof toast === 'function' && TG.HapticFeedback) {
     const original = toast;

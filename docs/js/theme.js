@@ -50,7 +50,10 @@ const Theme = (() => {
 
     // Радиус круга — до самого дальнего угла экрана
     const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+    // Помечаем, что это смена темы, а не переход между страницами (см. animations.css)
+    root.classList.add('theme-switching');
     const transition = document.startViewTransition(() => apply(next));
+    transition.finished.finally(() => root.classList.remove('theme-switching'));
     transition.ready.then(() => {
       root.animate(
         { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
