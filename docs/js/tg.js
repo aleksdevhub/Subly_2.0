@@ -39,6 +39,42 @@
     }, true);
   }
 
+  // ---------- Иконка Subly на главном экране телефона (Telegram 8.0+) ----------
+  const canAddToHome = TG.isVersionAtLeast('8.0') && typeof TG.addToHomeScreen === 'function';
+  const BANNER_KEY = 'subly_home_banner_hidden';
+
+  function showHomeStatus(status) {
+    // unsupported — телефон не умеет, added — уже на экране, missed / unknown — можно добавить
+    const card = document.getElementById('home-card');
+    const banner = document.getElementById('home-banner');
+    if (status === 'unsupported') return;
+
+    if (card) {
+      card.classList.remove('hidden');
+      const btn = card.querySelector('[data-home-add]');
+      if (status === 'added' && btn) {
+        btn.outerHTML = '<span class="done">✓ Уже на экране</span>';
+        document.getElementById('home-text').textContent = 'Subly открывается с главного экрана телефона';
+      }
+    }
+    let hidden = false;
+    try { hidden = localStorage.getItem(BANNER_KEY) === '1'; } catch { /* ignore */ }
+    if (banner) banner.classList.toggle('hidden', status === 'added' || hidden);
+  }
+
+  if (canAddToHome) {
+    document.querySelectorAll('[data-home-add]').forEach((b) => b.addEventListener('click', () => TG.addToHomeScreen()));
+    document.getElementById('home-banner-close')?.addEventListener('click', () => {
+      try { localStorage.setItem(BANNER_KEY, '1'); } catch { /* ignore */ }
+      document.getElementById('home-banner').classList.add('hidden');
+    });
+    TG.onEvent('homeScreenAdded', () => {
+      showHomeStatus('added');
+      if (typeof toast === 'function') toast('Subly добавлен на главный экран');
+    });
+    try { TG.checkHomeScreenStatus(showHomeStatus); } catch { /* старый клиент */ }
+  }
+
   // Лёгкая вибрация: успех — при сохранении, ошибка — при ошибке
   if (typeof toast === 'function' && TG.HapticFeedback) {
     const original = toast;

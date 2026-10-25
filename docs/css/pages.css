@@ -186,3 +186,19 @@
 
 /* ---------- Небольшие вспомогательные блоки ---------- */
 .row-between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* ---------- Иконка на главном экране (Telegram) ---------- */
+.home-banner {
+  display: flex; align-items: center; gap: 12px; padding: 10px 10px 10px 14px; border-radius: var(--radius-lg);
+  background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--border));
+}
+.home-banner p { flex: 1; min-width: 0; }
+.home-banner .btn { height: 34px; padding: 0 14px; font-size: 13px; }
+.home-card { padding: 0; overflow: hidden; }
+.home-row { display: flex; align-items: center; gap: 14px; padding: 14px 18px; }
+.home-row .text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.home-row .btn { height: 34px; padding: 0 14px; font-size: 13px; }
+.home-row .done { font-size: 13px; font-weight: 500; color: var(--success); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
+@media (max-width: 600px) {
+  .home-banner .muted { display: none; }   /* на телефоне — коротко */
+}
