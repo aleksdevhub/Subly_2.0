@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Библиотека Telegram Mini Apps -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="js/theme.js"></script>
+  <title>Достижения — Subly</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- Боковое меню (одинаковое на всех страницах приложения) -->
+    <aside class="sidebar">
+      <a href="dashboard.html" class="logo"><span class="logo-mark"><i data-icon="repeat" data-size="16"></i></span>Subly</a>
+
+      <!-- Кнопка быстрого поиска (то же самое — сочетание Ctrl+K) -->
+      <button class="search-trigger" data-palette aria-label="Поиск">
+        <i data-icon="search" data-size="16"></i><span class="label">Поиск</span><kbd>Ctrl K</kbd>
+      </button>
+
+      <nav class="nav">
+        <div class="overline">Обзор</div>
+        <a href="dashboard.html"><i data-icon="home" data-size="18"></i><span>Главная</span></a>
+        <a href="analytics.html"><i data-icon="chart" data-size="18"></i><span>Аналитика</span></a>
+        <a href="categories.html"><i data-icon="grid" data-size="18"></i><span>Категории</span></a>
+        <a href="achievements.html" class="active"><i data-icon="trophy" data-size="18"></i><span>Награды</span></a>
+        <a href="profile.html"><i data-icon="user" data-size="18"></i><span>Профиль</span></a>
+      </nav>
+
+      <div class="grow"></div>
+
+      <!-- Бюджет на месяц: заполняется из API -->
+      <div class="budget">
+        <div class="row-between"><span class="caption muted" id="sb-budget-title">Бюджет на месяц</span><span class="caption faint" id="sb-budget-total"></span></div>
+        <div class="h3" id="sb-budget-spent">—</div>
+        <div class="track" id="sb-budget-track"><span style="width:0%"></span></div>
+        <div class="caption faint" id="sb-budget-left">&nbsp;</div>
+      </div>
+
+      <!-- Смена темы: светлая / тёмная -->
+      <button class="theme-toggle" data-theme-toggle aria-label="Тёмная тема">
+        <span class="theme-icon"><span class="sun"><i data-icon="sun" data-size="18"></i></span><span class="moon"><i data-icon="moon" data-size="18"></i></span></span>
+        <span class="label">Тёмная тема</span>
+        <span class="switch"></span>
+      </button>
+
+      <div class="user-row">
+        <div class="avatar" id="sb-avatar"></div>
+        <div class="who">
+          <div class="small medium" id="sb-name"></div>
+          <div class="caption faint" id="sb-email"></div>
+        </div>
+        <button class="logout" id="logout-btn" title="Выйти" aria-label="Выйти"><i data-icon="logout" data-size="18"></i></button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="page-head reveal" style="--i:0">
+        <div class="titles">
+          <h1 class="h1">Достижения</h1>
+          <p class="muted" id="ach-sub">&nbsp;</p>
+        </div>
+      </header>
+
+      <!-- Серии и экономия -->
+      <section class="streaks">
+        <article class="card streak-card reveal" style="--i:1">
+          <div class="streak-top">
+            <span class="streak-icon budget lg"><i data-icon="target" data-size="20"></i></span>
+            <div><div class="kpi-label">В рамках бюджета</div>
+              <div class="streak-num"><span id="st-budget-num">0</span> <span class="unit" id="st-budget-unit">месяцев</span></div></div>
+          </div>
+          <div class="months" id="st-months"></div>
+          <div class="kpi-hint wrap" id="st-budget-hint"></div>
+        </article>
+        <article class="card streak-card reveal" style="--i:2">
+          <div class="streak-top">
+            <span class="streak-icon fire lg"><i data-icon="flame" data-size="20"></i></span>
+            <div><div class="kpi-label">Подряд с Subly</div>
+              <div class="streak-num"><span id="st-visit-num">0</span> <span class="unit" id="st-visit-unit">дней</span></div></div>
+          </div>
+          <div class="months" id="st-week"></div>
+          <div class="kpi-hint wrap" id="st-visit-hint"></div>
+        </article>
+        <article class="card streak-card reveal" style="--i:3">
+          <div class="streak-top">
+            <span class="streak-icon save lg"><i data-icon="piggy" data-size="20"></i></span>
+            <div><div class="kpi-label">Сэкономлено за год</div>
+              <div class="streak-num" id="st-saved">0 ₽</div></div>
+          </div>
+          <div class="saved-list" id="st-saved-list"></div>
+        </article>
+      </section>
+
+      <!-- Награды -->
+      <section class="card card-pad reveal" style="--i:4">
+        <div class="row-between"><h2 class="h3">Награды</h2><span class="small muted" id="ach-count"></span></div>
+        <div class="track ach-track"><span id="ach-bar" style="width:0%"></span></div>
+        <div class="ach-grid" id="ach-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Карточка награды -->
+  <template id="tpl-ach">
+    <article class="ach">
+      <div class="ach-icon" data-f="icon"></div>
+      <div class="ach-text">
+        <div class="medium" data-f="title"></div>
+        <div class="small muted" data-f="desc"></div>
+        <div class="ach-foot"><div class="track"><span data-f="bar" style="width:0%"></span></div><span class="caption faint" data-f="progress"></span></div>
+      </div>
+    </article>
+  </template>
+
+  <!-- Быстрый поиск (Ctrl+K): поиск по разделам, действиям и подпискам -->
+  <template id="tpl-palette">
+    <div class="palette" role="dialog" aria-modal="true" aria-label="Поиск">
+      <label class="palette-input">
+        <i data-icon="search" data-size="18"></i>
+        <input type="text" placeholder="Поиск подписок, разделов и действий…" autocomplete="off" data-f="input">
+        <kbd>Esc</kbd>
+      </label>
+      <div class="palette-list" data-f="list"></div>
+      <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> выбрать</span><span><kbd>Enter</kbd> открыть</span></div>
+    </div>
+  </template>
+  <script src="js/icons.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/tg.js"></script>
+  <script src="js/achievements.js"></script>
+  <script src="js/layout.js"></script>
+  <script src="js/palette.js"></script>
+  <script>Achievements.initPage();</script>
+</body>
+</html>

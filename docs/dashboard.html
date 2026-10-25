@@ -34,6 +34,7 @@
         <a href="dashboard.html" class="active"><i data-icon="home" data-size="18"></i><span>Главная</span></a>
         <a href="analytics.html"><i data-icon="chart" data-size="18"></i><span>Аналитика</span></a>
         <a href="categories.html"><i data-icon="grid" data-size="18"></i><span>Категории</span></a>
+        <a href="achievements.html"><i data-icon="trophy" data-size="18"></i><span>Награды</span></a>
         <a href="profile.html"><i data-icon="user" data-size="18"></i><span>Профиль</span></a>
       </nav>
 
@@ -120,6 +121,17 @@
           </article>
         </div>
       </section>
+
+      <!-- Серии и достижения (страница achievements.html) -->
+      <a class="card streak-strip hidden reveal" style="--i:5" href="achievements.html" id="streak-strip">
+        <span class="ss-item"><span class="streak-icon fire"><i data-icon="flame" data-size="16"></i></span>
+          <span><b id="ss-visit">0</b> <span class="muted" id="ss-visit-l">дней подряд</span></span></span>
+        <span class="ss-item"><span class="streak-icon budget"><i data-icon="target" data-size="16"></i></span>
+          <span><b id="ss-budget">0</b> <span class="muted" id="ss-budget-l">месяцев в бюджете</span></span></span>
+        <span class="ss-item"><span class="streak-icon ach"><i data-icon="trophy" data-size="16"></i></span>
+          <span><b id="ss-ach">0/16</b> <span class="muted">наград</span></span></span>
+        <i data-icon="chevronR" data-size="16"></i>
+      </a>
 
       <!-- Ближайшие 14 дней: лента с днями списаний -->
       <section class="card upcoming reveal" style="--i:5">
@@ -316,6 +328,7 @@
   <script src="js/api.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/tg.js"></script>
+  <script src="js/achievements.js"></script>
   <script src="js/layout.js"></script>
   <script src="js/palette.js"></script>
   <script src="js/subscription-form.js"></script>

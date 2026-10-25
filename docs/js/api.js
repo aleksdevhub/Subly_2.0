@@ -33,7 +33,9 @@ class ApiError extends Error {
 /** Запрос к «API»: отвечает Store так же, как отвечал сервер */
 async function api(path, options = {}) {
   try {
-    return await Store.request(path, options);
+    const result = await Store.request(path, options);
+    if (typeof Achievements !== 'undefined') Achievements.celebrate(Store.takeNewUnlocks());
+    return result;
   } catch (err) {
     if (err instanceof ApiError) throw err;
     console.error(err);

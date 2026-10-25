@@ -48,6 +48,7 @@
     const card = document.getElementById('home-card');
     const banner = document.getElementById('home-banner');
     if (status === 'unsupported') return;
+    if (status === 'added' && typeof Achievements !== 'undefined') Achievements.event('home');
 
     if (card) {
       card.classList.remove('hidden');
@@ -70,6 +71,7 @@
     });
     TG.onEvent('homeScreenAdded', () => {
       showHomeStatus('added');
+      if (typeof Achievements !== 'undefined') Achievements.event('home');
       if (typeof toast === 'function') toast('Subly добавлен на главный экран');
     });
     try { TG.checkHomeScreenStatus(showHomeStatus); } catch { /* старый клиент */ }

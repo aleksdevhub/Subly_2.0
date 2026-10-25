@@ -202,3 +202,104 @@
 @media (max-width: 600px) {
   .home-banner .muted { display: none; }   /* на телефоне — коротко */
 }
+
+/* ---------- Серии и достижения ---------- */
+.streak-icon {
+  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; flex-shrink: 0;
+}
+.streak-icon.lg { width: 40px; height: 40px; border-radius: 11px; }
+.streak-icon.fire   { background: color-mix(in srgb, #E8962C 16%, transparent); color: #E8962C; }
+.streak-icon.budget { background: color-mix(in srgb, #1F9D63 16%, transparent); color: #1F9D63; }
+.streak-icon.save   { background: color-mix(in srgb, #F25F8B 16%, transparent); color: #F25F8B; }
+.streak-icon.ach    { background: var(--accent-soft); color: var(--accent); }
+
+/* Полоска на главной */
+.streak-strip {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; align-items: center; gap: 12px;
+  padding: 12px 16px; color: var(--ink); font-weight: 400;
+}
+.streak-strip:hover { text-decoration: none; border-color: var(--border-strong); }
+.streak-strip > .icon { color: var(--ink-3); }
+.ss-item { display: flex; align-items: center; gap: 10px; font-size: 13px; min-width: 0; }
+.ss-item b { font-size: 15px; }
+
+/* Страница «Достижения» */
+.streaks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.streak-card { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.streak-top { display: flex; align-items: center; gap: 12px; }
+.streak-num { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.streak-num .unit { font-size: 14px; font-weight: 500; color: var(--ink-2); letter-spacing: 0; }
+.kpi-hint.wrap { white-space: normal; }
+
+.months { display: flex; gap: 6px; }
+.mdot, .wdot { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; color: var(--ink-3); min-width: 0; }
+.mdot i, .wdot i {
+  width: 100%; max-width: 30px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: var(--bg-subtle); color: #fff;
+}
+.mdot.ok i { background: #1F9D63; }
+.mdot.bad i { background: color-mix(in srgb, var(--danger) 70%, var(--bg-subtle)); }
+.mdot.now i { box-shadow: 0 0 0 2px var(--bg-surface), 0 0 0 3.5px var(--accent); }
+.mdot.now span, .wdot.today span { color: var(--accent); font-weight: 600; }
+.wdot.on i { background: #E8962C; }
+
+.saved-list { display: flex; flex-direction: column; gap: 8px; }
+.saved-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; }
+.saved-row span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.ach-track { margin: 12px 0 16px; }
+.ach-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+.ach {
+  display: flex; gap: 12px; padding: 14px; border-radius: var(--radius); border: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+.ach-icon {
+  --c: var(--accent);
+  width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0; display: grid; place-items: center; position: relative;
+  color: #fff; background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--c) 70%, #fff), var(--c));
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--c) 35%, transparent);
+}
+.ach-icon.sm { width: 34px; height: 34px; }
+.ach-icon .lock {
+  position: absolute; right: -2px; bottom: -2px; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg-surface); color: var(--ink-3); display: grid; place-items: center; box-shadow: 0 0 0 1px var(--border);
+}
+.ach.locked .ach-icon { background: var(--bg-subtle); color: var(--ink-3); box-shadow: none; }
+.ach.locked .medium { color: var(--ink-2); }
+.ach-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ach-foot { display: flex; flex-direction: column; gap: 5px; margin-top: 6px; }
+.ach-foot .track { height: 4px; }
+.ach:not(.locked) .ach-foot .caption { color: var(--success); }
+
+/* Праздничное окно при открытии награды */
+.unlock-backdrop {
+  position: fixed; inset: 0; z-index: 70; background: var(--overlay); backdrop-filter: blur(3px);
+  display: grid; place-items: center; padding: 20px;
+}
+.unlock-card {
+  position: relative; width: 100%; max-width: 360px; background: var(--bg-surface); border-radius: 22px;
+  border: 1px solid var(--border); box-shadow: var(--shadow-modal); padding: 28px 22px 18px;
+  display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; overflow: hidden;
+}
+.unlock-kicker { color: var(--accent); }
+.unlock-badge {
+  --c: var(--accent);
+  width: 96px; height: 96px; border-radius: 50%; display: grid; place-items: center; color: #fff; margin: 6px 0 4px;
+  background: radial-gradient(circle at 30% 25%, color-mix(in srgb, var(--c) 65%, #fff), var(--c));
+  box-shadow: 0 0 0 8px color-mix(in srgb, var(--c) 14%, transparent), 0 12px 30px color-mix(in srgb, var(--c) 40%, transparent);
+}
+.unlock-card .btn { margin-top: 8px; }
+.unlock-list { width: 100%; display: flex; flex-direction: column; gap: 10px; text-align: left; margin: 6px 0; max-height: 46vh; overflow-y: auto; }
+.unlock-row { display: flex; align-items: center; gap: 12px; }
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti i { position: absolute; top: -12px; left: var(--x); width: 7px; height: 12px; border-radius: 2px; transform: rotate(var(--r)); opacity: 0; }
+
+@media (max-width: 900px) {
+  .streaks { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 600px) {
+  .streak-strip { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 12px; }
+  .streak-strip > .icon { display: none; }
+  .ss-item { flex-direction: column; align-items: flex-start; gap: 6px; font-size: 12px; }
+  .ach-grid { grid-template-columns: minmax(0, 1fr); }
+}

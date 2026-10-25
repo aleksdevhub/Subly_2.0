@@ -132,19 +132,43 @@ const Store = (() => {
       subscriptions: [],
       // платёж: [id, подписка, категория, название, сумма, дата, способ оплаты] — коротко, чтобы влезало в облако
       payments: [],
+      ...extraFields(),
     };
   }
 
-  async function load() {
+  /** Поля для достижений и серий (у старых данных их нет — добавляем при загрузке) */
+  function extraFields() {
+    return {
+      visit: { last: null, days: 0, best: 0 },   // серия дней, когда открывали Subly
+      savings: [],                               // отменённые или на паузе: { subId, name, monthly, date }
+      achievements: {},                          // открытые достижения: { id: 'ГГГГ-ММ-ДД' }
+      flags: {},                                 // разовые события: тёмная тема, иконка на экране…
+    };
+  }
+  function migrate() {
+    const extra = extraFields();
+    for (const k of Object.keys(extra)) if (state[k] === undefined) state[k] = extra[k];
+  }
+
+  // Одна загрузка на всех: если несколько запросов пришли одновременно, они ждут одну и ту же
+  let loading = null;
+  function load() {
+    if (state) return Promise.resolve(state);
+    if (!loading) loading = loadOnce();
+    return loading;
+  }
+
+  async function loadOnce() {
     if (state) return state;
     // Пока открыта вкладка, держим копию в sessionStorage — переходы между страницами быстрее
     try {
       const cached = sessionStorage.getItem(`${KEY}_cache_${USER_KEY}`);
-      if (cached) { state = JSON.parse(cached); return state; }
+      if (cached) { state = JSON.parse(cached); migrate(); return state; }
     } catch { /* ignore */ }
     let text = null;
     try { text = await backend.read(); } catch { text = null; }
     state = text ? JSON.parse(text) : emptyState();
+    migrate();
     if (!text) await save();
     cacheSession();
     return state;
@@ -344,6 +368,7 @@ const Store = (() => {
     const parts = url.pathname.split('/').filter(Boolean);   // ['api', 'subscriptions', '5']
     const id = Number(parts[2]);
     let dirty = syncPayments();
+    dirty = updateVisit() || dirty;
     let result;
 
     const route = `${method} /${parts.slice(0, 2).join('/')}${parts[2] ? '/:id' : ''}`;
@@ -376,6 +401,8 @@ const Store = (() => {
           const anchor = parse(next).getDate();
           while (next <= today()) next = nextDate(next, v.billingPeriod, anchor);
         }
+        if (s.isActive && !v.isActive) addSaving(s);                 // поставили на паузу — это экономия
+        if (!s.isActive && v.isActive) removeSaving(s.id);           // включили обратно
         Object.assign(s, v, { nextPaymentDate: next, startDate: s.startDate < next ? s.startDate : next });
         syncPayments();
         dirty = true;
@@ -383,7 +410,8 @@ const Store = (() => {
         break;
       }
       case 'DELETE /api/subscriptions/:id': {
-        if (!state.subscriptions.some((x) => x.id === id)) fail(404, 'Подписка не найдена');
+        const del = state.subscriptions.find((x) => x.id === id) || fail(404, 'Подписка не найдена');
+        if (del.isActive) addSaving(del);                            // отменили подписку — это экономия
         state.subscriptions = state.subscriptions.filter((x) => x.id !== id);
         state.payments.forEach((p) => { if (p[1] === id) p[1] = null; });   // история платежей остаётся
         dirty = true;
@@ -393,6 +421,18 @@ const Store = (() => {
       case 'GET /api/categories':
         result = categoriesList();
         break;
+      case 'GET /api/achievements':
+        result = achievementsDto();
+        break;
+      case 'POST /api/achievements': {
+        // Разовые события со страницы: включили тёмную тему, добавили иконку на экран
+        if (['dark', 'home'].includes(body && body.event) && !state.flags[body.event]) {
+          state.flags[body.event] = today();
+          dirty = true;
+        }
+        result = null;
+        break;
+      }
       case 'POST /api/categories': {
         const c = { id: newId(), ...validateCat(body) };
         state.categories.push(c);
@@ -454,8 +494,136 @@ const Store = (() => {
         fail(404, 'Неизвестный запрос: ' + route);
     }
 
+    // После любого изменения проверяем, не открылись ли новые достижения
+    if (checkAchievements()) dirty = true;
     if (dirty) await save();
     return result;
+  }
+
+  // =========================================================
+  //  Достижения и серии
+  // =========================================================
+
+  function addSaving(s) {
+    removeSaving(s.id);
+    state.savings.push({ subId: s.id, name: s.name, monthly: monthlyPrice(s), date: today() });
+  }
+  function removeSaving(subId) {
+    state.savings = state.savings.filter((x) => x.subId !== subId);
+  }
+
+  /** Серия дней: открывал Subly сегодня, вчера, позавчера… */
+  function updateVisit() {
+    const t = today(), v = state.visit;
+    if (v.last === t) return false;
+    v.days = v.last === addDays(t, -1) ? v.days + 1 : 1;
+    v.best = Math.max(v.best, v.days);
+    v.last = t;
+    return true;
+  }
+
+  /** Серия месяцев в бюджете: завершённые месяцы подряд, где потрачено не больше бюджета */
+  function budgetStreak() {
+    const budget = state.user.budget;
+    const t = parse(today());
+    const months = [];
+    // с месяца первого платежа (или регистрации) до прошлого месяца
+    const firstDate = [state.user.createdAt, ...state.payments.map((p) => p[5])].sort()[0];
+    let d = new Date(parse(firstDate).getFullYear(), parse(firstDate).getMonth(), 1);
+    const thisMonth = new Date(t.getFullYear(), t.getMonth(), 1);
+    while (d < thisMonth) {
+      const from = fmt(d), to = fmt(new Date(d.getFullYear(), d.getMonth() + 1, 0));
+      const spent = sumPayments(from, to);
+      months.push({ month: from.slice(0, 7), spent, ok: budget > 0 && spent <= budget });
+      d = new Date(d.getFullYear(), d.getMonth() + 1, 1);
+    }
+    let current = 0;
+    for (let i = months.length - 1; i >= 0 && months[i].ok; i--) current++;
+    let best = 0, run = 0;
+    for (const m of months) { run = m.ok ? run + 1 : 0; best = Math.max(best, run); }
+    const stats = computeStats();
+    return {
+      budget, current, best,
+      months: months.slice(-6),                                  // последние 6 месяцев — для кружочков
+      thisMonth: { spent: stats.monthTotal, ok: budget > 0 && stats.monthTotal <= budget },
+    };
+  }
+
+  // Список достижений: id, название, описание, иконка, цвет и как считать прогресс
+  const ACHIEVEMENTS = [
+    ['first_sub', 'Первый шаг', 'Добавить первую подписку', 'plus', '#5B4CF0', (c) => [c.subs, 1]],
+    ['five_subs', 'Всё под контролем', 'Добавить 5 подписок', 'repeat', '#3B8CF0', (c) => [c.subs, 5]],
+    ['ten_subs', 'Коллекционер', 'Добавить 10 подписок', 'grid', '#9B5DE5', (c) => [c.subs, 10]],
+    ['budget', 'Есть план', 'Задать бюджет на месяц в профиле', 'target', '#1FA88A', (c) => [c.budget > 0 ? 1 : 0, 1]],
+    ['month_ok', 'В рамках', 'Закончить месяц, не выйдя за бюджет', 'check', '#1F9D63', (c) => [Math.min(c.streak.best, 1), 1]],
+    ['streak3', 'Три месяца в бюджете', 'Серия: 3 месяца подряд в рамках бюджета', 'flame', '#E8962C', (c) => [c.streak.best, 3]],
+    ['streak6', 'Полгода дисциплины', 'Серия: 6 месяцев подряд в рамках бюджета', 'trophy', '#E5484D', (c) => [c.streak.best, 6]],
+    ['saver', 'Экономист', 'Отменить подписку или поставить её на паузу', 'piggy', '#F25F8B', (c) => [Math.min(c.savings.length, 1), 1]],
+    ['save1000', 'Тысяча в год', 'Сэкономить 1 000 ₽ в год на отменённых подписках', 'piggy', '#C47A00', (c) => [Math.round(c.savedYear), 1000]],
+    ['save5000', 'Финансист', 'Сэкономить 5 000 ₽ в год', 'star', '#7A8B2E', (c) => [Math.round(c.savedYear), 5000]],
+    ['yearly', 'Дальновидный', 'Оформить годовую подписку — обычно она дешевле', 'calendar', '#0EA5B7', (c) => [c.yearly ? 1 : 0, 1]],
+    ['custom_cat', 'Свой порядок', 'Создать свою категорию', 'grid', '#16161D', (c) => [c.customCats ? 1 : 0, 1]],
+    ['visit7', 'Неделя с Subly', 'Открывать Subly 7 дней подряд', 'flame', '#E8962C', (c) => [c.visit.best, 7]],
+    ['visit30', 'Месяц с Subly', 'Открывать Subly 30 дней подряд', 'trophy', '#5B4CF0', (c) => [c.visit.best, 30]],
+    ['dark', 'Тёмная сторона', 'Включить тёмную тему', 'moon', '#34343D', (c) => [c.flags.dark ? 1 : 0, 1]],
+    ['home', 'Как приложение', 'Добавить Subly на главный экран телефона', 'home', '#3B8CF0', (c) => [c.flags.home ? 1 : 0, 1]],
+  ];
+
+  let newUnlocks = [];
+
+  function context() {
+    const savedMonthly = state.savings.reduce((a, x) => a + x.monthly, 0);
+    return {
+      subs: state.subscriptions.length,
+      budget: state.user.budget,
+      streak: budgetStreak(),
+      savings: state.savings,
+      savedYear: round2(savedMonthly * 12),
+      yearly: state.subscriptions.some((s) => s.billingPeriod === 'yearly'),
+      customCats: state.categories.some((c) => !DEFAULT_CATEGORIES.some(([name]) => name === c.name)),
+      visit: state.visit,
+      flags: state.flags,
+    };
+  }
+
+  /** Отмечает новые открытые достижения. Возвращает true, если что-то изменилось. */
+  function checkAchievements() {
+    const c = context();
+    let changed = false;
+    for (const [id, title, desc, icon, color, progress] of ACHIEVEMENTS) {
+      if (state.achievements[id]) continue;
+      const [value, goal] = progress(c);
+      if (value >= goal) {
+        state.achievements[id] = today();
+        newUnlocks.push({ id, title, desc, icon, color });
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  function achievementsDto() {
+    const c = context();
+    const list = ACHIEVEMENTS.map(([id, title, desc, icon, color, progress]) => {
+      const [value, goal] = progress(c);
+      return { id, title, desc, icon, color, unlocked: !!state.achievements[id], date: state.achievements[id] || null,
+        value: Math.min(value, goal), goal };
+    });
+    return {
+      streak: c.streak,
+      visit: state.visit,
+      savings: { items: [...state.savings].reverse(), monthly: round2(c.savedYear / 12), yearly: c.savedYear },
+      achievements: list,
+      unlocked: list.filter((a) => a.unlocked).length,
+      total: list.length,
+    };
+  }
+
+  /** Новые достижения, которые ещё не показали пользователю */
+  function takeNewUnlocks() {
+    const list = newUnlocks;
+    newUnlocks = [];
+    return list;
   }
 
   /** Аналитика за год — перенос AnalyticsController.Analytics */
@@ -498,5 +666,5 @@ const Store = (() => {
     };
   }
 
-  return { request, load, IN_TELEGRAM, USER_KEY, telegramUser };
+  return { request, load, takeNewUnlocks, IN_TELEGRAM, USER_KEY, telegramUser };
 })();

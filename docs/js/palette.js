@@ -16,6 +16,7 @@ const Palette = (() => {
     { label: 'Главная', icon: 'home', run: () => go('dashboard.html') },
     { label: 'Аналитика', icon: 'chart', run: () => go('analytics.html') },
     { label: 'Категории', icon: 'grid', run: () => go('categories.html') },
+    { label: 'Достижения', icon: 'trophy', run: () => go('achievements.html') },
     { label: 'Профиль', icon: 'user', run: () => go('profile.html') },
   ];
 

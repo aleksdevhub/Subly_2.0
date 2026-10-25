@@ -142,9 +142,14 @@ function confirmDialog({ title, text, confirmText = 'Удалить' }) {
 // ---------- Выпадающее меню «⋯» ----------
 
 let openMenuEl = null;
+let menuScrollY = 0;
 function closeMenu() { openMenuEl?.remove(); openMenuEl = null; }
 document.addEventListener('click', closeMenu);
-window.addEventListener('scroll', closeMenu, true);
+// Закрываем меню, только если страницу заметно прокрутили: на телефоне после свайпа
+// экран ещё немного «доезжает» по инерции, и меню не должно от этого пропадать
+window.addEventListener('scroll', () => {
+  if (openMenuEl && Math.abs(window.scrollY - menuScrollY) > 40) closeMenu();
+}, true);
 
 /** items: [{ label, icon, danger, onClick }] */
 function showMenu(anchor, items) {
@@ -170,6 +175,7 @@ function showMenu(anchor, items) {
     items[+b.dataset.i].onClick();
   });
   openMenuEl = menu;
+  menuScrollY = window.scrollY;
 }
 
 // ---------- Уведомление внизу экрана ----------

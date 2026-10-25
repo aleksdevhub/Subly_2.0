@@ -64,6 +64,7 @@ async function loadDashboard() {
   renderSegments();
   renderUpcoming();
   renderTip();
+  Achievements.renderStrip();
   Dash.firstLoad = false;
 }
 
