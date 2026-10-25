@@ -182,7 +182,7 @@
 .ach:not(.locked):hover { transform: translateY(-2px); border-color: var(--border-strong); }
 .ach:not(.locked):hover .ach-icon { animation: badge-pop .5s cubic-bezier(.34, 1.56, .64, 1); }
 .mdot i, .wdot i { transition: transform .2s; }
-.streak-strip .streak-icon.fire { animation: flicker 2.8s ease-in-out infinite; }
+.streak-strip .streak-icon.si-fire { animation: flicker 2.8s ease-in-out infinite; }
 @keyframes flicker { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08) rotate(-3deg); } }
 
 /* ---------- Плавные переходы между разделами (как в приложении) ----------
