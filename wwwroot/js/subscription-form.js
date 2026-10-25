@@ -55,6 +55,9 @@ async function setActive(s, isActive, onChanged) {
 function showSubscriptionMenu(anchor, s, onChanged) {
   showMenu(anchor, [
     { label: 'Изменить', icon: 'edit', onClick: () => openSubscriptionForm({ sub: s, onSaved: onChanged }) },
+    ...(typeof SublyCalendar !== 'undefined' && s.isActive ? [{
+      label: 'Напомнить в календаре', icon: 'calendar', onClick: () => SublyCalendar.open(s),
+    }] : []),
     ...(typeof CancelGuides !== 'undefined' && s.isActive ? [{
       label: 'Как отменить', icon: 'x', onClick: () => CancelGuides.openFor(s, () => setActive(s, false, onChanged)),
     }] : []),

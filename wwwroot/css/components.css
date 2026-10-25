@@ -408,3 +408,11 @@
 .cg-store .link-btn { align-self: flex-start; }
 .cg-actions { display: flex; flex-direction: column; gap: 8px; }
 .cg-actions .btn { gap: 8px; }
+
+/* ---------- Окно «Напомнить в календаре» ---------- */
+.cal-modal { gap: 16px; }
+.cal-field { display: flex; flex-direction: column; gap: 8px; }
+.cal-remind { align-self: flex-start; }
+.cal-actions { display: flex; flex-direction: column; gap: 8px; }
+.cal-actions .btn { gap: 8px; }
+.cal-hint { line-height: 1.45; }

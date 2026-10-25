@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Напоминания — Subly</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <script src="js/theme.js?v=20261025-3"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/base.css?v=20261025-3">
+  <link rel="stylesheet" href="css/components.css?v=20261025-3">
+  <style>
+    /* Отдельная страница для браузера: сюда Telegram отправляет, чтобы скачать файл календаря */
+    body { min-height: 100vh; display: grid; place-items: start center; padding: 32px 16px; }
+    .ics { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 18px; }
+    .ics-logo { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 17px; }
+    .ics-logo span { width: 32px; height: 32px; border-radius: 9px; background: var(--lime); color: #16161D; display: grid; place-items: center; }
+    .ics-card { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .ics-list { display: flex; flex-direction: column; }
+    .ics-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-top: 1px solid var(--border); }
+    .ics-row:first-child { border-top: 0; }
+    .ics-row .grow { flex: 1; min-width: 0; }
+    .ics-row .name { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .ics-row .g { font-size: 12px; white-space: nowrap; }
+    .steps { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-2); padding-left: 18px; list-style: decimal; }
+  </style>
+</head>
+<body>
+  <main class="ics">
+    <div class="ics-logo"><span><i data-icon="repeat" data-size="16"></i></span>Subly</div>
+    <section class="card ics-card hidden" id="ok">
+      <div class="modal-title">
+        <h1 class="h2">Напоминания о списаниях</h1>
+        <p class="muted" id="sub"></p>
+      </div>
+      <div class="chips" id="remind"></div>
+      <button type="button" class="btn btn-primary btn-block" id="dl"><i data-icon="download" data-size="16"></i>Скачать файл календаря</button>
+      <ol class="steps">
+        <li>Нажмите «Скачать» и откройте файл</li>
+        <li>iPhone: «Добавить все» · Android: выберите «Календарь»</li>
+        <li>Готово — календарь напомнит перед каждым списанием</li>
+      </ol>
+      <div class="ics-list" id="list"></div>
+    </section>
+    <section class="card ics-card hidden" id="bad">
+      <h1 class="h2">Ссылка устарела</h1>
+      <p class="muted">Откройте Subly в Telegram и нажмите «Напомнить в календаре» ещё раз.</p>
+    </section>
+  </main>
+
+  <script src="js/icons.js?v=20261025-3"></script>
+  <script src="js/calendar.js?v=20261025-3"></script>
+  <script>
+    (() => {
+      let data;
+      try { data = SublyCalendar.unpack(location.hash.slice(1)); } catch { data = null; }
+      if (!data || !Array.isArray(data.s) || !data.s.length) { document.getElementById('bad').classList.remove('hidden'); return; }
+
+      let remind = data.r;
+      const subs = data.s;
+      const money = (n) => Number(n).toLocaleString('ru-RU') + ' ₽';
+      document.getElementById('ok').classList.remove('hidden');
+      document.getElementById('sub').textContent = subs.length === 1
+        ? `${subs[0].name} · ${money(subs[0].price)} ${subs[0].billingPeriod === 'yearly' ? 'раз в год' : 'каждый месяц'}`
+        : `Подписок: ${subs.length}. Каждая станет повторяющимся событием с напоминанием.`;
+
+      const remindBox = document.getElementById('remind');
+      remindBox.innerHTML = SublyCalendar.REMIND.map((r) => `<button type="button" class="chip${r.days === remind ? ' active' : ''}" data-days="${r.days}">${r.label}</button>`).join('');
+      remindBox.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-days]'); if (!b) return;
+        remind = Number(b.dataset.days);
+        remindBox.querySelectorAll('.chip').forEach((x) => x.classList.toggle('active', x === b));
+      });
+
+      const list = document.getElementById('list');
+      subs.forEach((s) => {
+        const row = document.createElement('div');
+        row.className = 'ics-row';
+        row.innerHTML = `<div class="grow"><div class="name"></div><div class="small muted"></div></div><a class="g" target="_blank" rel="noopener">Google Календарь</a>`;
+        row.querySelector('.name').textContent = s.name;
+        row.querySelector('.small').textContent = `${money(s.price)} · ближайшее ${new Date(s.nextPaymentDate + 'T00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}`;
+        row.querySelector('a').href = SublyCalendar.googleUrl(s);
+        list.appendChild(row);
+      });
+
+      const name = subs.length === 1 ? `subly-${SublyCalendar.translit(subs[0].name)}.ics` : 'subly-vse-podpiski.ics';
+      document.getElementById('dl').addEventListener('click', () => SublyCalendar.downloadIcs(subs, remind, name));
+    })();
+  </script>
+</body>
+</html>

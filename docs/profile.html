@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Библиотека Telegram Mini Apps -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="js/theme.js"></script>
+  <script src="js/theme.js?v=20261025-3"></script>
   <title>Профиль — Subly</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/pages.css">
-  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/base.css?v=20261025-3">
+  <link rel="stylesheet" href="css/components.css?v=20261025-3">
+  <link rel="stylesheet" href="css/layout.css?v=20261025-3">
+  <link rel="stylesheet" href="css/pages.css?v=20261025-3">
+  <link rel="stylesheet" href="css/animations.css?v=20261025-3">
 </head>
 <body>
   <div class="app">
@@ -127,6 +127,18 @@
                 <span class="small muted" id="home-text">Открывайте Subly в одно касание, как обычное приложение</span>
               </span>
               <button class="btn btn-secondary" data-home-add>Добавить</button>
+            </div>
+          </section>
+
+          <!-- Напоминания о списаниях через календарь телефона -->
+          <section class="card home-card reveal" style="--i:2">
+            <div class="home-row">
+              <span class="tile tile-sm tile-accent"><i data-icon="calendar" data-size="18"></i></span>
+              <span class="text">
+                <span class="medium">Напоминания в календаре</span>
+                <span class="small muted">Календарь телефона предупредит перед каждым списанием</span>
+              </span>
+              <button class="btn btn-secondary" id="cal-all-btn">Добавить</button>
             </div>
           </section>
 
@@ -258,16 +270,17 @@
       <div class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> выбрать</span><span><kbd>Enter</kbd> открыть</span></div>
     </div>
   </template>
-  <script src="js/icons.js"></script>
-  <script src="js/store.js"></script>
-  <script src="js/api.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/tg.js"></script>
-  <script src="js/achievements.js"></script>
-  <script src="js/layout.js"></script>
-  <script src="js/cancel-guides.js"></script>
-  <script src="js/palette.js"></script>
-  <script src="js/profile.js"></script>
+  <script src="js/icons.js?v=20261025-3"></script>
+  <script src="js/store.js?v=20261025-3"></script>
+  <script src="js/api.js?v=20261025-3"></script>
+  <script src="js/ui.js?v=20261025-3"></script>
+  <script src="js/tg.js?v=20261025-3"></script>
+  <script src="js/achievements.js?v=20261025-3"></script>
+  <script src="js/layout.js?v=20261025-3"></script>
+  <script src="js/calendar.js?v=20261025-3"></script>
+  <script src="js/cancel-guides.js?v=20261025-3"></script>
+  <script src="js/palette.js?v=20261025-3"></script>
+  <script src="js/profile.js?v=20261025-3"></script>
   <script>initProfile();</script>
 </body>
 </html>

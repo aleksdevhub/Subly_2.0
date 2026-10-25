@@ -8,7 +8,8 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     // Telegram передаёт данные пользователя в адресе после «#» — переносим их на главную
-    location.replace('dashboard.html' + location.hash);
+    // ?v=… — чтобы телефон каждый раз брал свежую версию страницы, а не старую из кэша
+    location.replace('dashboard.html?v=' + Date.now() + location.hash);
   </script>
 </head>
 <body></body>

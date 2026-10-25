@@ -13,6 +13,9 @@ async function initProfile() {
   $$('[data-edit]').forEach((b) => b.addEventListener('click', openEditProfile));
   $('#pwd-btn').addEventListener('click', openChangePassword);
   $('#delete-btn').addEventListener('click', openDeleteAccount);
+  $('#cal-all-btn')?.addEventListener('click', async () => {
+    try { SublyCalendar.open(await api('/api/subscriptions')); } catch (err) { toast(err.message, 'error'); }
+  });
   await loadProfile();
 }
 
