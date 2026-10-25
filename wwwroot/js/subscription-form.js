@@ -43,19 +43,24 @@ function renderSubRows(container, subs, onChanged, animate = true) {
   });
 }
 
-/** Меню действий подписки: изменить, пауза/возобновить, удалить */
+async function setActive(s, isActive, onChanged) {
+  try {
+    await api(`/api/subscriptions/${s.id}`, { method: 'PUT', body: toRequest(s, { isActive }) });
+    toast(isActive ? 'Подписка снова активна' : 'Подписка на паузе — списания не учитываются');
+    onChanged();
+  } catch (err) { toast(err.message, 'error'); }
+}
+
+/** Меню действий подписки: изменить, как отменить, пауза/возобновить, удалить */
 function showSubscriptionMenu(anchor, s, onChanged) {
   showMenu(anchor, [
     { label: 'Изменить', icon: 'edit', onClick: () => openSubscriptionForm({ sub: s, onSaved: onChanged }) },
+    ...(typeof CancelGuides !== 'undefined' && s.isActive ? [{
+      label: 'Как отменить', icon: 'x', onClick: () => CancelGuides.openFor(s, () => setActive(s, false, onChanged)),
+    }] : []),
     {
       label: s.isActive ? 'Поставить на паузу' : 'Возобновить', icon: s.isActive ? 'pause' : 'play',
-      onClick: async () => {
-        try {
-          await api(`/api/subscriptions/${s.id}`, { method: 'PUT', body: toRequest(s, { isActive: !s.isActive }) });
-          toast(s.isActive ? 'Подписка на паузе — списания не учитываются' : 'Подписка снова активна');
-          onChanged();
-        } catch (err) { toast(err.message, 'error'); }
-      },
+      onClick: () => setActive(s, !s.isActive, onChanged),
     },
     {
       label: 'Удалить', icon: 'trash', danger: true,

@@ -370,3 +370,41 @@
 [data-theme="dark"] .theme-icon .moon { opacity: 1; transform: none; }
 
 [data-theme="dark"] .swatch:not(.selected) { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .14); }
+
+/* ---------- Инструкция «Как отменить подписку» ---------- */
+.cg-modal { gap: 16px; }
+.cg-logo {
+  width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center;
+  background: var(--c); color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--c) 35%, transparent);
+}
+.cg-body { display: flex; flex-direction: column; gap: 14px; }
+.cg-way { display: flex; flex-direction: column; gap: 8px; }
+.cg-steps { list-style: none; counter-reset: step; display: flex; flex-direction: column; gap: 8px; }
+.cg-steps li {
+  counter-increment: step; position: relative; padding-left: 34px; min-height: 24px; line-height: 1.45; padding-top: 2px;
+}
+.cg-steps li::before {
+  content: counter(step); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%;
+  display: grid; place-items: center; font-size: 12px; font-weight: 600;
+  background: var(--accent-soft); color: var(--accent);
+}
+.cg-note {
+  display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius);
+  background: var(--warning-soft); color: var(--ink); font-size: 13px; line-height: 1.45;
+}
+.cg-note svg { color: var(--warning); margin-top: 1px; }
+.cg-more { border: 1px solid var(--border); border-radius: var(--radius); }
+.cg-more summary {
+  list-style: none; cursor: pointer; padding: 11px 12px; font-size: 13px; font-weight: 500; color: var(--ink-2);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+.cg-more summary::-webkit-details-marker { display: none; }
+.cg-more summary svg { transition: transform .2s ease; }
+.cg-more[open] summary svg { transform: rotate(180deg); }
+.cg-store { display: flex; flex-direction: column; gap: 8px; padding: 12px; border-top: 1px solid var(--border); font-size: 13px; }
+.cg-store .cg-steps li { padding-left: 30px; }
+.cg-store .cg-steps li::before { width: 20px; height: 20px; font-size: 11px; background: var(--bg-subtle); color: var(--ink-2); }
+.cg-store .link-btn { align-self: flex-start; }
+.cg-actions { display: flex; flex-direction: column; gap: 8px; }
+.cg-actions .btn { gap: 8px; }

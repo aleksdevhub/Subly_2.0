@@ -52,6 +52,18 @@ const Palette = (() => {
         })),
       });
     }
+    // Инструкции «Как отменить»: «спотифай», «отменить кинопоиск» или просто «отменить» — покажет все
+    if (q.length >= 2 && typeof CancelGuides !== 'undefined') {
+      const wantsCancel = /отмен|отключ|отпис|cancel/.test(q);
+      const base = q.replace(/(как\s+)?(отменить|отключить|отписаться|отмена|отписка|cancel)/g, '').trim();
+      const guides = !base
+        ? (wantsCancel ? CancelGuides.GUIDES : [])
+        : CancelGuides.GUIDES.filter((g) => CancelGuides.find(base) === g || g.name.toLowerCase().includes(base));
+      if (guides.length) groups.push({
+        title: 'Как отменить',
+        items: guides.slice(0, wantsCancel ? 20 : 3).map((g) => ({ label: `Как отменить ${g.name}`, icon: 'x', run: () => CancelGuides.open(g) })),
+      });
+    }
     const pages = PAGES.filter((p) => match(p.label));
     if (pages.length) groups.push({ title: 'Разделы', items: pages });
     const acts = actions().filter((a) => match(a.label));
